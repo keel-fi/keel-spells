@@ -4,3 +4,6 @@
 [submodule "lib/sky-star-alm-controller"]
 	path = lib/sky-star-alm-controller
 	url = https://github.com/sidestream-tech/sky-star-alm-controller
+[submodule "lib/keel-address-registry"]
+	path = lib/keel-address-registry
+	url = https://github.com/keel-fi/keel-address-registry
