@@ -28,4 +28,12 @@ library KeelLiquidityLayerHelpers {
 
         IRateLimits(rateLimits).setUnlimitedRateLimitData(withdrawKey);
     }
+
+    function setUSDSMintRateLimit(address rateLimits, uint256 maxAmount, uint256 slope) internal {
+        IRateLimits(rateLimits).setRateLimitData(LIMIT_USDS_MINT, maxAmount, slope);
+    }
+
+    function setUSDSToUSDCRateLimit(address rateLimits, uint256 maxUsdcAmount, uint256 slope) internal {
+        IRateLimits(rateLimits).setRateLimitData(LIMIT_USDS_TO_USDC, maxUsdcAmount, slope);
+    }
 }

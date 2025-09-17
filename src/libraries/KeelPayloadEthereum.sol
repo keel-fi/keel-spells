@@ -19,4 +19,12 @@ abstract contract KeelPayloadEthereum {
     function _onboardERC4626Vault(address vault, uint256 depositMax, uint256 depositSlope) internal {
         KeelLiquidityLayerHelpers.onboardERC4626Vault(Ethereum.ALM_RATE_LIMITS, vault, depositMax, depositSlope);
     }
+
+    function _setUSDSMintRateLimit(uint256 maxAmount, uint256 slope) internal {
+        KeelLiquidityLayerHelpers.setUSDSMintRateLimit(Ethereum.ALM_RATE_LIMITS, maxAmount, slope);
+    }
+
+    function _setUSDSToUSDCRateLimit(uint256 maxAmount, uint256 slope) internal {
+        KeelLiquidityLayerHelpers.setUSDSToUSDCRateLimit(Ethereum.ALM_RATE_LIMITS, maxAmount, slope);
+    }
 }
