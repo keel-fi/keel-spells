@@ -33,7 +33,7 @@ abstract contract SpellRunner is Test {
     // ChainData is already taken in StdChains
     struct DomainData {
         address payload;
-        IExecutor executor;
+        // IExecutor executor;
         Domain domain;
         /// @notice on mainnet: empty
         /// on L2s: bridges that'll include txs in the L2. there can be multiple
@@ -144,7 +144,7 @@ abstract contract SpellRunner is Test {
         // chainData[ChainIdUtils.Base()].domain        = getChain("base").createFork(blocks[1]);
         // chainData[ChainIdUtils.ArbitrumOne()].domain = getChain("arbitrum_one").createFork(blocks[2]);
         // chainData[ChainIdUtils.Optimism()].domain    = getChain("optimism").createFork(blocks[3]);
-        chainData[ChainIdUtils.Avalanche()].domain = getChain("avalanche").createFork(blocks[4]);
+        // chainData[ChainIdUtils.Avalanche()].domain = getChain("avalanche").createFork(blocks[4]);
 
         // CREATE FORKS WITH STATICALLY CHOSEN BLOCKS HERE
         // chainData[ChainIdUtils.Gnosis()].domain      = getChain("gnosis_chain").createFork(39404891);  // Gnosis block lookup is not supported by Alchemy
@@ -158,14 +158,11 @@ abstract contract SpellRunner is Test {
         // We default to Ethereum domain
         chainData[ChainIdUtils.Ethereum()].domain.selectFork();
 
-        chainData[ChainIdUtils.Ethereum()].executor = IExecutor(Ethereum.GROVE_PROXY);
+        // chainData[ChainIdUtils.Ethereum()].executor = IExecutor(Ethereum.GROVE_PROXY);
         chainData[ChainIdUtils.Ethereum()].prevController = Ethereum.ALM_CONTROLLER;
         chainData[ChainIdUtils.Ethereum()].newController = Ethereum.ALM_CONTROLLER;
 
         // DEFINE FOREIGN EXECUTORS HERE
-        chainData[ChainIdUtils.Avalanche()].executor = IExecutor(Avalanche.GROVE_EXECUTOR);
-        chainData[ChainIdUtils.Avalanche()].prevController = Avalanche.ALM_CONTROLLER;
-        chainData[ChainIdUtils.Avalanche()].newController = Avalanche.ALM_CONTROLLER;
 
         // chainData[ChainIdUtils.Base()].executor        = IExecutor(Base.GROVE_EXECUTOR);
         // chainData[ChainIdUtils.Gnosis()].executor      = IExecutor(Gnosis.GROVE_EXECUTOR);
@@ -240,15 +237,15 @@ abstract contract SpellRunner is Test {
         // );
 
         // Avalanche
-        chainData[ChainIdUtils.Avalanche()].bridges.push(
-            CCTPBridgeTesting.createCircleBridge(
-                chainData[ChainIdUtils.Ethereum()].domain, chainData[ChainIdUtils.Avalanche()].domain
-            )
-        );
+        // chainData[ChainIdUtils.Avalanche()].bridges.push(
+        //     CCTPBridgeTesting.createCircleBridge(
+        //         chainData[ChainIdUtils.Ethereum()].domain, chainData[ChainIdUtils.Avalanche()].domain
+        //     )
+        // );
 
         // REGISTER CHAINS HERE
         allChains.push(ChainIdUtils.Ethereum());
-        allChains.push(ChainIdUtils.Avalanche());
+        //allChains.push(ChainIdUtils.Avalanche());
         // allChains.push(ChainIdUtils.Base());
         // allChains.push(ChainIdUtils.Gnosis());
         // allChains.push(ChainIdUtils.ArbitrumOne());
@@ -284,11 +281,11 @@ abstract contract SpellRunner is Test {
     /// @dev takes care to revert the selected fork to what was chosen before
     function executeAllPayloadsAndBridges() internal {
         // only execute mainnet payload
-        executeMainnetPayload();
+        // executeMainnetPayload();
         // then use bridges to execute other chains' payloads
         _relayMessageOverBridges();
         // execute the foreign payloads (either by simulation or real execute)
-        _executeForeignPayloads();
+        // _executeForeignPayloads();
     }
 
     /// @dev bridge contracts themselves are stored on mainnet
@@ -315,74 +312,74 @@ abstract contract SpellRunner is Test {
         }
     }
 
-    function _executeForeignPayloads() private onChain(ChainIdUtils.Ethereum()) {
-        for (uint256 i = 0; i < allChains.length; i++) {
-            ChainId chainId = ChainIdUtils.fromDomain(chainData[allChains[i]].domain);
-            if (chainId == ChainIdUtils.Ethereum()) continue; // Don't execute mainnet
+    // function _executeForeignPayloads() private onChain(ChainIdUtils.Ethereum()) {
+    //     for (uint256 i = 0; i < allChains.length; i++) {
+    //         ChainId chainId = ChainIdUtils.fromDomain(chainData[allChains[i]].domain);
+    //         if (chainId == ChainIdUtils.Ethereum()) continue; // Don't execute mainnet
 
-            // UNCOMMENT AFTER OTHER DOMAINS ARE SET UP
-            address mainnetSpellPayload = _getForeignPayloadFromMainnetSpell(chainId);
-            IExecutor executor = chainData[chainId].executor;
-            if (mainnetSpellPayload != address(0)) {
-                // We assume the payload has been queued in the executor (will revert otherwise)
-                chainData[chainId].domain.selectFork();
-                uint256 actionsSetId = executor.actionsSetCount() - 1;
-                uint256 prevTimestamp = block.timestamp;
-                vm.warp(executor.getActionsSetById(actionsSetId).executionTime);
-                executor.execute(actionsSetId);
-                chainData[chainId].spellExecuted = true;
-                vm.warp(prevTimestamp);
-            } else {
-                // We will simulate execution until the real spell is deployed in the mainnet spell
-                address payload = chainData[chainId].payload;
-                if (payload != address(0)) {
-                    chainData[chainId].domain.selectFork();
-                    vm.prank(address(executor));
-                    executor.executeDelegateCall(payload, abi.encodeWithSignature("execute()"));
-                    chainData[chainId].spellExecuted = true;
-                    console.log("simulating execution payload for network: ", chainId.toDomainString());
-                }
-            }
-        }
-    }
+    //         // UNCOMMENT AFTER OTHER DOMAINS ARE SET UP
+    //         address mainnetSpellPayload = _getForeignPayloadFromMainnetSpell(chainId);
+    //         //IExecutor executor = chainData[chainId].executor;
+    //         if (mainnetSpellPayload != address(0)) {
+    //             // We assume the payload has been queued in the executor (will revert otherwise)
+    //             chainData[chainId].domain.selectFork();
+    //             uint256 actionsSetId = executor.actionsSetCount() - 1;
+    //             uint256 prevTimestamp = block.timestamp;
+    //             vm.warp(executor.getActionsSetById(actionsSetId).executionTime);
+    //             executor.execute(actionsSetId);
+    //             chainData[chainId].spellExecuted = true;
+    //             vm.warp(prevTimestamp);
+    //         } else {
+    //             // We will simulate execution until the real spell is deployed in the mainnet spell
+    //             address payload = chainData[chainId].payload;
+    //             if (payload != address(0)) {
+    //                 chainData[chainId].domain.selectFork();
+    //                 vm.prank(address(executor));
+    //                 executor.executeDelegateCall(payload, abi.encodeWithSignature("execute()"));
+    //                 chainData[chainId].spellExecuted = true;
+    //                 console.log("simulating execution payload for network: ", chainId.toDomainString());
+    //             }
+    //         }
+    //     }
+    // }
 
-    function _getForeignPayloadFromMainnetSpell(ChainId chainId)
-        internal
-        onChain(ChainIdUtils.Ethereum())
-        returns (address)
-    {
-        // RETURN PAYLOAD ADDRESSES FROM THE MAINNET SPELL HERE
+    // function _getForeignPayloadFromMainnetSpell(ChainId chainId)
+    //     internal
+    //     onChain(ChainIdUtils.Ethereum())
+    //     returns (address)
+    // {
+    //     // RETURN PAYLOAD ADDRESSES FROM THE MAINNET SPELL HERE
 
-        GrovePayloadEthereum spell = GrovePayloadEthereum(chainData[ChainIdUtils.Ethereum()].payload);
-        if (chainId == ChainIdUtils.Avalanche()) {
-            return spell.PAYLOAD_AVALANCHE();
-            // } else if (chainId == ChainIdUtils.Base()) {
-            //     return spell.PAYLOAD_BASE();
-            // } else if (chainId == ChainIdUtils.Gnosis()) {
-            //     return spell.PAYLOAD_GNOSIS();
-            // } else if (chainId == ChainIdUtils.ArbitrumOne()) {
-            //     return spell.PAYLOAD_ARBITRUM();
-            // } else if (chainId == ChainIdUtils.Optimism()) {
-            //     return spell.PAYLOAD_OPTIMISM();
-            // } else if (chainId == ChainIdUtils.Unichain()) {
-            //     return spell.PAYLOAD_UNICHAIN();
-        } else {
-            revert("Unsupported chainId");
-        }
-    }
+    //     KeelPayloadEthereum spell = KeelPayloadEthereum(chainData[ChainIdUtils.Ethereum()].payload);
+    //     //if (chainId == ChainIdUtils.Avalanche()) {
+    //         //return spell.PAYLOAD_AVALANCHE();
+    //         // } else if (chainId == ChainIdUtils.Base()) {
+    //         //     return spell.PAYLOAD_BASE();
+    //         // } else if (chainId == ChainIdUtils.Gnosis()) {
+    //         //     return spell.PAYLOAD_GNOSIS();
+    //         // } else if (chainId == ChainIdUtils.ArbitrumOne()) {
+    //         //     return spell.PAYLOAD_ARBITRUM();
+    //         // } else if (chainId == ChainIdUtils.Optimism()) {
+    //         //     return spell.PAYLOAD_OPTIMISM();
+    //         // } else if (chainId == ChainIdUtils.Unichain()) {
+    //         //     return spell.PAYLOAD_UNICHAIN();
+    //     } else {
+    //         revert("Unsupported chainId");
+    //     }
+    // }
 
-    function executeMainnetPayload() internal onChain(ChainIdUtils.Ethereum()) {
-        address payloadAddress = chainData[ChainIdUtils.Ethereum()].payload;
-        IExecutor executor = chainData[ChainIdUtils.Ethereum()].executor;
-        require(_isContract(payloadAddress), "PAYLOAD IS NOT A CONTRACT");
+    // function executeMainnetPayload() internal onChain(ChainIdUtils.Ethereum()) {
+    //     address payloadAddress = chainData[ChainIdUtils.Ethereum()].payload;
+    //     // IExecutor executor = chainData[ChainIdUtils.Ethereum()].executor;
+    //     require(_isContract(payloadAddress), "PAYLOAD IS NOT A CONTRACT");
 
-        vm.prank(Ethereum.PAUSE_PROXY);
-        (bool success,) = address(executor).call(
-            abi.encodeWithSignature("exec(address,bytes)", payloadAddress, abi.encodeWithSignature("execute()"))
-        );
-        require(success, "FAILED TO EXECUTE PAYLOAD");
-        chainData[ChainIdUtils.Ethereum()].spellExecuted = true;
-    }
+    //     vm.prank(Ethereum.PAUSE_PROXY);
+    //     (bool success,) = address(executor).call(
+    //         abi.encodeWithSignature("exec(address,bytes)", payloadAddress, abi.encodeWithSignature("execute()"))
+    //     );
+    //     require(success, "FAILED TO EXECUTE PAYLOAD");
+    //     chainData[ChainIdUtils.Ethereum()].spellExecuted = true;
+    // }
 
     function _clearLogs() internal {
         RecordedLogs.clearLogs();

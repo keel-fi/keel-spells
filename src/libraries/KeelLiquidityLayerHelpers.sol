@@ -8,10 +8,10 @@ import {IRateLimits} from "sky-star-alm-controller/src/interfaces/IRateLimits.so
  * @notice Helper functions for the Keel Liquidity Layer
  */
 library KeelLiquidityLayerHelpers {
-    bytes32 private constant LIMIT_4626_DEPOSIT = keccak256("LIMIT_4626_DEPOSIT");
-    bytes32 private constant LIMIT_4626_WITHDRAW = keccak256("LIMIT_4626_WITHDRAW");
-    bytes32 private constant LIMIT_USDS_MINT = keccak256("LIMIT_USDS_MINT");
-    bytes32 private constant LIMIT_USDS_TO_USDC = keccak256("LIMIT_USDS_TO_USDC");
+    bytes32 public constant LIMIT_4626_DEPOSIT = keccak256("LIMIT_4626_DEPOSIT");
+    bytes32 public constant LIMIT_4626_WITHDRAW = keccak256("LIMIT_4626_WITHDRAW");
+    bytes32 public constant LIMIT_USDS_MINT = keccak256("LIMIT_USDS_MINT");
+    bytes32 public constant LIMIT_USDS_TO_USDC = keccak256("LIMIT_USDS_TO_USDC");
 
     /**
      * @notice Onboard an ERC4626 vault
@@ -29,10 +29,12 @@ library KeelLiquidityLayerHelpers {
         IRateLimits(rateLimits).setUnlimitedRateLimitData(withdrawKey);
     }
 
+    // TODO: are we setting rate limints correctly?
     function setUSDSMintRateLimit(address rateLimits, uint256 maxAmount, uint256 slope) internal {
         IRateLimits(rateLimits).setRateLimitData(LIMIT_USDS_MINT, maxAmount, slope);
     }
 
+    // TODO: are we setting rate limints correctly?
     function setUSDSToUSDCRateLimit(address rateLimits, uint256 maxUsdcAmount, uint256 slope) internal {
         IRateLimits(rateLimits).setRateLimitData(LIMIT_USDS_TO_USDC, maxUsdcAmount, slope);
     }

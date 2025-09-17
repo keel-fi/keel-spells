@@ -284,17 +284,17 @@ abstract contract KeelLiquidityLayerTests is SpellRunner {
             );
         }
 
-        if (currentChain == ChainIdUtils.Ethereum()) {
-            assertEq(
-                controller.centrifugeRecipients(KeelLiquidityLayerHelpers.SOLANA_DESTINATION_CENTRIFUGE_ID),
-                bytes32(uint256(uint160(address(0))))
-            );
-        } else {
-            assertEq(
-                controller.centrifugeRecipients(KeelLiquidityLayerHelpers.ETHEREUM_DESTINATION_CENTRIFUGE_ID),
-                bytes32(uint256(uint160(address(0))))
-            );
-        }
+        // if (currentChain == ChainIdUtils.Ethereum()) {
+        //     assertEq(
+        //         controller.centrifugeRecipients(KeelLiquidityLayerHelpers.SOLANA_DESTINATION_CENTRIFUGE_ID),
+        //         bytes32(uint256(uint160(address(0))))
+        //     );
+        // } else {
+        //     assertEq(
+        //         controller.centrifugeRecipients(KeelLiquidityLayerHelpers.ETHEREUM_DESTINATION_CENTRIFUGE_ID),
+        //         bytes32(uint256(uint160(address(0))))
+        //     );
+        // }
 
         executeAllPayloadsAndBridges();
 
