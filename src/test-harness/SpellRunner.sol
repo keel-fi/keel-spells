@@ -119,10 +119,10 @@ abstract contract SpellRunner is Test {
         // ADD MORE CHAINS HERE
         string[] memory chains = new string[](5);
         chains[0] = "eth-mainnet";
-        chains[1] = "base-mainnet";
-        chains[2] = "arb-mainnet";
-        chains[3] = "opt-mainnet";
-        chains[4] = "avax-mainnet";
+        // chains[1] = "base-mainnet";
+        // chains[2] = "arb-mainnet";
+        // chains[3] = "opt-mainnet";
+        // chains[4] = "avax-mainnet";
 
         uint256[] memory blocks = getBlocksFromDate(date, chains);
 
@@ -130,7 +130,7 @@ abstract contract SpellRunner is Test {
         // console.log("      Base block:", blocks[1]);
         // console.log("  Arbitrum block:", blocks[2]);
         // console.log("  Optimism block:", blocks[3]);
-        console.log(" Avalanche block:", blocks[4]);
+        // console.log(" Avalanche block:", blocks[4]);
 
         // DEFINE CUSTOM CHAINS HERE
         // setChain("unichain", ChainData({
