@@ -7,3 +7,9 @@
 [submodule "lib/keel-address-registry"]
 	path = lib/keel-address-registry
 	url = https://github.com/keel-fi/keel-address-registry
+[submodule "lib/xchain-helpers"]
+	path = lib/xchain-helpers
+	url = https://github.com/sparkdotfi/xchain-helpers
+[submodule "lib/dss-allocator"]
+	path = lib/dss-allocator
+	url = https://github.com/makerdao/dss-allocator
