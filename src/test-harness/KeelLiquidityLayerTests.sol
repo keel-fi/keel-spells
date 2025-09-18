@@ -157,10 +157,6 @@ abstract contract KeelLiquidityLayerTests is SpellRunner {
 
     function _assertRateLimit(bytes32 key, uint256 maxAmount, uint256 slope) internal view {
         IRateLimits.RateLimitData memory rateLimit = _getKeelLiquidityLayerContext().rateLimits.getRateLimitData(key);
-        console.log("rateLimit.maxAmount", rateLimit.maxAmount);
-        console.log("maxAmount", maxAmount);
-        console.log("rateLimit.slope", rateLimit.slope);
-        console.log("slope", slope);
         assertEq(rateLimit.maxAmount, maxAmount);
         assertEq(rateLimit.slope, slope);
     }

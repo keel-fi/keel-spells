@@ -56,7 +56,7 @@ contract KeelEthereum_20251002Test is KeelTestBase {
         //deployPayloads();
 
         vm.startPrank(Ethereum.PAUSE_PROXY);
-        //IPSMLike(address(controller.psm())).kiss(address(almProxy));
+        IPSMLike(address(controller.psm())).kiss(address(almProxy));
         vm.stopPrank();
     }
 
