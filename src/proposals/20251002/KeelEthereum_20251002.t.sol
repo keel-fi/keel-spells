@@ -4,6 +4,7 @@ pragma solidity ^0.8.10;
 import "src/test-harness/KeelTestBase.sol";
 
 import { IERC20 } from "forge-std/interfaces/IERC20.sol";
+import {console} from "forge-std/console.sol";
 
 import { Ethereum } from "lib/keel-address-registry/src/Ethereum.sol";
 
@@ -46,9 +47,19 @@ contract KeelEthereum_20251002Test is KeelTestBase {
         setupDomains("2025-09-01T16:50:00Z");
         chainData[ChainIdUtils.Ethereum()].payload = KEEL_ETHEREUM_20251002;
 
-        vm.startPrank(Ethereum.PAUSE_PROXY);
-        IPSMLike(address(controller.psm())).kiss(address(almProxy));
-        vm.stopPrank();
+        console.log("here1");
+
+        // vm.startPrank(Ethereum.PAUSE_PROXY);
+
+        console.log("here2");
+
+        // IPSMLike(address(controller.psm())).kiss(address(almProxy));
+
+        console.log("here3");
+
+        // vm.stopPrank();
+
+        console.log("here4");
     }
 
     function test_almSystemDeployment() public view {

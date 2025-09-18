@@ -117,7 +117,7 @@ abstract contract SpellRunner is Test {
 
     function setupBlocksFromDate(string memory date) internal {
         // ADD MORE CHAINS HERE
-        string[] memory chains = new string[](5);
+        string[] memory chains = new string[](1);
         chains[0] = "eth-mainnet";
         // chains[1] = "base-mainnet";
         // chains[2] = "arb-mainnet";
@@ -158,7 +158,7 @@ abstract contract SpellRunner is Test {
         // We default to Ethereum domain
         chainData[ChainIdUtils.Ethereum()].domain.selectFork();
 
-        // chainData[ChainIdUtils.Ethereum()].executor = IExecutor(Ethereum.GROVE_PROXY);
+        // chainData[ChainIdUtils.Ethereum()].executor = IExecutor(Ethereum.KEEL_PROXY);
         chainData[ChainIdUtils.Ethereum()].prevController = Ethereum.ALM_CONTROLLER;
         chainData[ChainIdUtils.Ethereum()].newController = Ethereum.ALM_CONTROLLER;
 
@@ -254,7 +254,7 @@ abstract contract SpellRunner is Test {
     }
 
     function spellIdentifier(ChainId chainId) private view returns (string memory) {
-        string memory slug = string(abi.encodePacked("Grove", chainId.toDomainString(), "_", id));
+        string memory slug = string(abi.encodePacked("Keel", chainId.toDomainString(), "_", id));
         string memory identifier = string(abi.encodePacked(slug, ".sol:", slug));
         return identifier;
     }

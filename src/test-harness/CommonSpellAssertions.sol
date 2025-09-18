@@ -240,7 +240,7 @@ abstract contract CommonSpellAssertions is SpellRunner {
         // Source domain id has to be always Ethereum Mainnet id
         assertEq(receiver.sourceDomainId(), 0, "incorrect-source-domain-id");
 
-        // Source authority has to be the Ethereum Mainnet Grove Proxy
+        // Source authority has to be the Ethereum Mainnet Keel Proxy
         assertEq(
             receiver.sourceAuthority(), bytes32(uint256(uint160(Ethereum.KEEL_PROXY))), "incorrect-source-authority"
         );
