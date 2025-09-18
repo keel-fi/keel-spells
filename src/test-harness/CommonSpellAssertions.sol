@@ -8,11 +8,11 @@ import {Ethereum} from "lib/keel-address-registry/src/Ethereum.sol";
 // TODO: figure out do we need this?
 //import {Executor} from "lib/keel-gov-relay/src/Executor.sol";
 
-import {IALMProxy} from "lib/sky-star-alm-controller/src/interfaces/IALMProxy.sol";
-import {IRateLimits} from "lib/sky-star-alm-controller/src/interfaces/IRateLimits.sol";
+import {IALMProxy} from "lib/keel-alm-controller/src/interfaces/IALMProxy.sol";
+import {IRateLimits} from "lib/keel-alm-controller/src/interfaces/IRateLimits.sol";
 
-import {ForeignController} from "lib/sky-star-alm-controller/src/ForeignController.sol";
-import {MainnetController} from "lib/sky-star-alm-controller/src/MainnetController.sol";
+import {ForeignController} from "lib/keel-alm-controller/src/ForeignController.sol";
+import {MainnetController} from "lib/keel-alm-controller/src/MainnetController.sol";
 
 import {CCTPReceiver} from "lib/xchain-helpers/src/receivers/CCTPReceiver.sol";
 
@@ -242,8 +242,7 @@ abstract contract CommonSpellAssertions is SpellRunner {
 
         // Source authority has to be the Ethereum Mainnet Grove Proxy
         assertEq(
-            // TODO: change to KEEL_PROXY
-            receiver.sourceAuthority(), bytes32(uint256(uint160(Ethereum.SPARK_PROXY))), "incorrect-source-authority"
+            receiver.sourceAuthority(), bytes32(uint256(uint160(Ethereum.KEEL_PROXY))), "incorrect-source-authority"
         );
 
         // Target has to be the executor

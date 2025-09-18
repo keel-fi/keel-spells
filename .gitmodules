@@ -1,9 +1,6 @@
 [submodule "lib/forge-std"]
 	path = lib/forge-std
 	url = https://github.com/foundry-rs/forge-std
-[submodule "lib/sky-star-alm-controller"]
-	path = lib/sky-star-alm-controller
-	url = https://github.com/sidestream-tech/sky-star-alm-controller
 [submodule "lib/keel-address-registry"]
 	path = lib/keel-address-registry
 	url = https://github.com/keel-fi/keel-address-registry
@@ -13,3 +10,6 @@
 [submodule "lib/dss-allocator"]
 	path = lib/dss-allocator
 	url = https://github.com/makerdao/dss-allocator
+[submodule "lib/keel-alm-controller"]
+	path = lib/keel-alm-controller
+	url = https://github.com/keel-fi/keel-alm-controller

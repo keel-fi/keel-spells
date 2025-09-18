@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: AGPL-3.0
 pragma solidity ^0.8.0;
 
-import {RateLimitHelpers} from "sky-star-alm-controller/src/RateLimitHelpers.sol";
-import {IRateLimits} from "sky-star-alm-controller/src/interfaces/IRateLimits.sol";
+import {RateLimitHelpers} from "keel-alm-controller/src/RateLimitHelpers.sol";
+import {IRateLimits} from "keel-alm-controller/src/interfaces/IRateLimits.sol";
 
 /**
  * @notice Helper functions for the Keel Liquidity Layer

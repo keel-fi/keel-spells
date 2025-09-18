@@ -10,19 +10,4 @@ import {DomainHelpers} from "xchain-helpers/testing/Domain.sol";
 
 /// @dev convenience contract meant to be the single point of entry for all
 /// spell-specific test contracts
-contract KeelTestBase is CommonTestBase, CommonSpellAssertions, KeelLiquidityLayerTests {
-    function setUp() public virtual {
-        // Set up domains with static block numbers for testing
-        // Using a recent mainnet block number instead of making API calls
-        chainData[ChainIdUtils.Ethereum()].domain = DomainHelpers.createFork(getChain("mainnet"), 21000000);
-        
-        // We default to Ethereum domain
-        DomainHelpers.selectFork(chainData[ChainIdUtils.Ethereum()].domain);
-        
-        chainData[ChainIdUtils.Ethereum()].prevController = Ethereum.ALM_CONTROLLER;
-        chainData[ChainIdUtils.Ethereum()].newController = Ethereum.ALM_CONTROLLER;
-        
-        // Register chains
-        allChains.push(ChainIdUtils.Ethereum());
-    }
-}
+contract KeelTestBase is CommonTestBase, CommonSpellAssertions, KeelLiquidityLayerTests {}

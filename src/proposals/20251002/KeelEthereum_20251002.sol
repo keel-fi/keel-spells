@@ -3,19 +3,19 @@ pragma solidity ^0.8.25;
 
 import {Ethereum, KeelPayloadEthereum} from "src/libraries/KeelPayloadEthereum.sol";
 
-import {MainnetControllerInit, ControllerInstance} from "lib/sky-star-alm-controller/deploy/MainnetControllerInit.sol";
+import {MainnetControllerInit, ControllerInstance} from "lib/keel-alm-controller/deploy/MainnetControllerInit.sol";
 
-import {MainnetController} from "lib/sky-star-alm-controller/src/MainnetController.sol";
+import {MainnetController} from "lib/keel-alm-controller/src/MainnetController.sol";
 
 /**
- * @title  September 15, 2025 Keel Ethereum Proposal
+ * @title  October 02, 2025 Keel Ethereum Proposal
  * @notice Activate Keel Liquidity Layer - initiate ALM system, set rate limits, onboard Centrifuge Vault
  * @author Exo Tech
  * Forum: TODO
  * Vote:  TODO -- Increase line and gap
  *        TODO -- Activate Liquidity Layer
  */
-contract KeelEthereum_20250915 is KeelPayloadEthereum {
+contract KeelEthereum_20251002 is KeelPayloadEthereum {
     function _execute() internal override {
         _initiateAlmSystem();
         _setupBasicRateLimits();
@@ -25,25 +25,23 @@ contract KeelEthereum_20250915 is KeelPayloadEthereum {
         MainnetControllerInit.MintRecipient[] memory mintRecipients = new MainnetControllerInit.MintRecipient[](0);
         MainnetControllerInit.LayerZeroRecipient[] memory layerZeroRecipients =
             new MainnetControllerInit.LayerZeroRecipient[](0);
+        MainnetControllerInit.MaxSlippageParams[] memory maxSlippageParams = new MainnetControllerInit.MaxSlippageParams[](0);
 
         MainnetControllerInit.initAlmSystem({
             vault: Ethereum.ALLOCATOR_VAULT,
             usds: Ethereum.USDS,
             controllerInst: ControllerInstance({
-                // TODO: change to KEEL values
                 almProxy: Ethereum.ALM_PROXY,
                 controller: Ethereum.ALM_CONTROLLER,
                 rateLimits: Ethereum.ALM_RATE_LIMITS
             }),
             configAddresses: MainnetControllerInit.ConfigAddressParams({
-                // TODO: change to KEEL values
                 freezer: Ethereum.ALM_FREEZER,
                 relayers: _createRelayersArray(),
                 oldController: address(0)
             }),
             checkAddresses: MainnetControllerInit.CheckAddressParams({
-                // TODO: change to KEEL values
-                admin: Ethereum.SPARK_PROXY,
+                admin: Ethereum.KEEL_PROXY,
                 proxy: Ethereum.ALM_PROXY,
                 rateLimits: Ethereum.ALM_RATE_LIMITS,
                 vault: Ethereum.ALLOCATOR_VAULT,
@@ -52,7 +50,8 @@ contract KeelEthereum_20250915 is KeelPayloadEthereum {
                 cctp: Ethereum.CCTP_TOKEN_MESSENGER
             }),
             mintRecipients: mintRecipients,
-            layerZeroRecipients: layerZeroRecipients
+            layerZeroRecipients: layerZeroRecipients,
+            maxSlippageParams: maxSlippageParams
         });
     }
 
