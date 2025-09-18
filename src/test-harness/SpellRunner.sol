@@ -33,7 +33,7 @@ abstract contract SpellRunner is Test {
     // ChainData is already taken in StdChains
     struct DomainData {
         address payload;
-        // IExecutor executor;
+        address executor;
         Domain domain;
         /// @notice on mainnet: empty
         /// on L2s: bridges that'll include txs in the L2. there can be multiple
@@ -151,6 +151,11 @@ abstract contract SpellRunner is Test {
         // chainData[ChainIdUtils.Unichain()].domain    = getChain("unichain").createFork(17517398);
     }
 
+    function setupDomain(uint256 mainnetForkBlock) internal {
+        vm.createSelectFork(getChain("mainnet").rpcUrl, mainnetForkBlock);
+        chainData[ChainIdUtils.Ethereum()].executor = Ethereum.KEEL_PROXY;
+    }
+
     /// @dev to be called in setUp
     function setupDomains(string memory date) internal {
         setupBlocksFromDate(date);
@@ -159,6 +164,7 @@ abstract contract SpellRunner is Test {
         chainData[ChainIdUtils.Ethereum()].domain.selectFork();
 
         // chainData[ChainIdUtils.Ethereum()].executor = IExecutor(Ethereum.KEEL_PROXY);
+        chainData[ChainIdUtils.Ethereum()].executor = Ethereum.KEEL_PROXY;
         chainData[ChainIdUtils.Ethereum()].prevController = Ethereum.ALM_CONTROLLER;
         chainData[ChainIdUtils.Ethereum()].newController = Ethereum.ALM_CONTROLLER;
 
@@ -260,7 +266,9 @@ abstract contract SpellRunner is Test {
     }
 
     function deployPayload(ChainId chainId) internal onChain(chainId) returns (address) {
-        return deployCode(spellIdentifier(chainId));
+        address payload = deployCode(spellIdentifier(chainId));
+        chainData[chainId].payload = payload;
+        return payload;
     }
 
     function deployPayloads() internal {
@@ -280,47 +288,57 @@ abstract contract SpellRunner is Test {
 
     /// @dev takes care to revert the selected fork to what was chosen before
     function executeAllPayloadsAndBridges() internal {
+        address payloadAddress = chainData[ChainIdUtils.Ethereum()].payload;
+        address executor = chainData[ChainIdUtils.Ethereum()].executor;
+
+        require(_isContract(payloadAddress), "PAYLOAD IS NOT A CONTRACT");
+
+        vm.prank(Ethereum.PAUSE_PROXY);
+        (bool success,) = executor.call(
+            abi.encodeWithSignature("exec(address,bytes)", payloadAddress, abi.encodeWithSignature("execute()"))
+        );
+        require(success, "FAILED TO EXECUTE PAYLOAD");
         // only execute mainnet payload
-        // executeMainnetPayload();
+        //executeMainnetPayload();
         // then use bridges to execute other chains' payloads
-        _relayMessageOverBridges();
+        //_relayMessageOverBridges();
         // execute the foreign payloads (either by simulation or real execute)
-        // _executeForeignPayloads();
+        //_executeForeignPayloads();
     }
 
     /// @dev bridge contracts themselves are stored on mainnet
-    function _relayMessageOverBridges() internal onChain(ChainIdUtils.Ethereum()) {
-        for (uint256 i = 0; i < allChains.length; i++) {
-            ChainId chainId = ChainIdUtils.fromDomain(chainData[allChains[i]].domain);
-            for (uint256 j = 0; j < chainData[chainId].bridges.length; j++) {
-                _executeBridge(chainData[chainId].bridges[j]);
-            }
-        }
-    }
+    // function _relayMessageOverBridges() internal onChain(ChainIdUtils.Ethereum()) {
+    //     for (uint256 i = 0; i < allChains.length; i++) {
+    //         ChainId chainId = ChainIdUtils.fromDomain(chainData[allChains[i]].domain);
+    //         for (uint256 j = 0; j < chainData[chainId].bridges.length; j++) {
+    //             _executeBridge(chainData[chainId].bridges[j]);
+    //         }
+    //     }
+    // }
 
     /// @dev this does not relay messages from L2s to mainnet except in the case of USDC
-    function _executeBridge(Bridge storage bridge) private {
-        if (bridge.bridgeType == BridgeType.OPTIMISM) {
-            OptimismBridgeTesting.relayMessagesToDestination(bridge, false);
-        } else if (bridge.bridgeType == BridgeType.CCTP) {
-            CCTPBridgeTesting.relayMessagesToDestination(bridge, false);
-            CCTPBridgeTesting.relayMessagesToSource(bridge, false);
-        } else if (bridge.bridgeType == BridgeType.AMB) {
-            AMBBridgeTesting.relayMessagesToDestination(bridge, false);
-        } else if (bridge.bridgeType == BridgeType.ARBITRUM) {
-            ArbitrumBridgeTesting.relayMessagesToDestination(bridge, false);
-        }
-    }
+    // function _executeBridge(Bridge storage bridge) private {
+    //     if (bridge.bridgeType == BridgeType.OPTIMISM) {
+    //         OptimismBridgeTesting.relayMessagesToDestination(bridge, false);
+    //     } else if (bridge.bridgeType == BridgeType.CCTP) {
+    //         CCTPBridgeTesting.relayMessagesToDestination(bridge, false);
+    //         CCTPBridgeTesting.relayMessagesToSource(bridge, false);
+    //     } else if (bridge.bridgeType == BridgeType.AMB) {
+    //         AMBBridgeTesting.relayMessagesToDestination(bridge, false);
+    //     } else if (bridge.bridgeType == BridgeType.ARBITRUM) {
+    //         ArbitrumBridgeTesting.relayMessagesToDestination(bridge, false);
+    //     }
+    // }
 
     // function _executeForeignPayloads() private onChain(ChainIdUtils.Ethereum()) {
     //     for (uint256 i = 0; i < allChains.length; i++) {
-    //         ChainId chainId = ChainIdUtils.fromDomain(chainData[allChains[i]].domain);
-    //         if (chainId == ChainIdUtils.Ethereum()) continue; // Don't execute mainnet
+    //          ChainId chainId = ChainIdUtils.fromDomain(chainData[allChains[i]].domain);
+    //          if (chainId == ChainIdUtils.Ethereum()) continue; // Don't execute mainnet
 
-    //         // UNCOMMENT AFTER OTHER DOMAINS ARE SET UP
-    //         address mainnetSpellPayload = _getForeignPayloadFromMainnetSpell(chainId);
-    //         //IExecutor executor = chainData[chainId].executor;
-    //         if (mainnetSpellPayload != address(0)) {
+    //          // UNCOMMENT AFTER OTHER DOMAINS ARE SET UP
+    //          address mainnetSpellPayload = _getForeignPayloadFromMainnetSpell(chainId);
+    //          //IExecutor executor = chainData[chainId].executor;
+    //          if (mainnetSpellPayload != address(0)) {
     //             // We assume the payload has been queued in the executor (will revert otherwise)
     //             chainData[chainId].domain.selectFork();
     //             uint256 actionsSetId = executor.actionsSetCount() - 1;

@@ -20,6 +20,8 @@ import {ChainId, ChainIdUtils} from "../libraries/ChainId.sol";
 
 import {SpellRunner} from "./SpellRunner.sol";
 
+import {console} from "forge-std/console.sol";
+
 struct KeelLiquidityLayerContext {
     address controller;
     IALMProxy proxy;
@@ -139,8 +141,8 @@ abstract contract KeelLiquidityLayerTests is SpellRunner {
         if (chain == ChainIdUtils.Ethereum()) {
             ctx = KeelLiquidityLayerContext(
                 controller,
-                IALMProxy(Ethereum.ALM_PROXY),
-                IRateLimits(Ethereum.ALM_RATE_LIMITS),
+                IALMProxy(0xa5139956eC99aE2e51eA39d0b57C42B6D8db0758),
+                IRateLimits(0x65E7B39e508944F7C4278d3e4580f84Eb20b26a7),
                 Ethereum.ALM_RELAYER,
                 Ethereum.ALM_FREEZER
             );
@@ -155,6 +157,10 @@ abstract contract KeelLiquidityLayerTests is SpellRunner {
 
     function _assertRateLimit(bytes32 key, uint256 maxAmount, uint256 slope) internal view {
         IRateLimits.RateLimitData memory rateLimit = _getKeelLiquidityLayerContext().rateLimits.getRateLimitData(key);
+        console.log("rateLimit.maxAmount", rateLimit.maxAmount);
+        console.log("maxAmount", maxAmount);
+        console.log("rateLimit.slope", rateLimit.slope);
+        console.log("slope", slope);
         assertEq(rateLimit.maxAmount, maxAmount);
         assertEq(rateLimit.slope, slope);
     }
