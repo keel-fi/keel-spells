@@ -57,8 +57,8 @@ contract KeelEthereum_20251002 is KeelPayloadEthereum {
     }
 
     function _setupBasicRateLimits() private {
-        _setUSDSMintRateLimit(100_000_000e18, 50_000_000e18 / uint256(1 days));
-        _setUSDSToUSDCRateLimit(100_000_000e6, 50_000_000e6 / uint256(1 days));
+        _setUSDSMintRateLimit(10_000e18, 5_000e18 / uint256(1 days));
+        _setUSDSToUSDCRateLimit(10_000e6, 5_000e6 / uint256(1 days));
     }
 
     function _createRelayersArray() private pure returns (address[] memory) {
