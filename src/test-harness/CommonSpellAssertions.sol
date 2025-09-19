@@ -198,36 +198,6 @@ abstract contract CommonSpellAssertions is SpellRunner {
         _verifyForeignControllerDeployment(contracts, actors, dependencies);
     }
 
-    // TODO: figure out if we need this?
-    // function _verifyForeignDomainExecutorDeployment(address _executor, address _receiver, address _deployer)
-    //     internal
-    //     view
-    // {
-    //     Executor executor = Executor(_executor);
-
-    //     // Executor has correct delay and grace period to default values
-    //     assertEq(executor.delay(), 0, "incorrect-executor-delay");
-    //     assertEq(executor.gracePeriod(), 7 days, "incorrect-executor-grace-period");
-
-    //     // Executor has not processed any actions sets
-    //     assertEq(executor.actionsSetCount(), 0, "incorrect-executor-actions-set-count");
-
-    //     // Executor is its own admin
-    //     assertEq(
-    //         executor.hasRole(executor.DEFAULT_ADMIN_ROLE(), _executor), true, "incorrect-default-admin-role-executor"
-    //     );
-
-    //     // Executor has no roles assigned to the deployer
-    //     assertEq(executor.hasRole(executor.SUBMISSION_ROLE(), _deployer), false, "incorrect-submission-role-executor");
-    //     assertEq(executor.hasRole(executor.GUARDIAN_ROLE(), _deployer), false, "incorrect-guardian-role-executor");
-    //     assertEq(
-    //         executor.hasRole(executor.DEFAULT_ADMIN_ROLE(), _deployer), false, "incorrect-default-admin-role-executor"
-    //     );
-
-    //     // Submissions role is correctly set to the crosschain receiver
-    //     assertEq(executor.hasRole(executor.SUBMISSION_ROLE(), _receiver), true, "incorrect-submission-role-executor");
-    // }
-
     function _verifyCctpReceiverDeployment(address _executor, address _receiver, address _cctpMessageTransmitter)
         internal
         view

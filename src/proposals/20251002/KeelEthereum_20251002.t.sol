@@ -49,10 +49,8 @@ contract KeelEthereum_20251002Test is KeelTestBase {
     }
 
     function setUp() public {
-        //setupDomains("2025-09-11T16:50:00Z");
         setupDomain({mainnetForkBlock: 23392563});
         deployPayload(ChainIdUtils.Ethereum());
-        //deployPayloads();
 
         vm.startPrank(Ethereum.PAUSE_PROXY);
         IPSMLike(address(controller.psm())).kiss(address(almProxy));

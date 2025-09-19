@@ -29,10 +29,22 @@ library KeelLiquidityLayerHelpers {
         IRateLimits(rateLimits).setUnlimitedRateLimitData(withdrawKey);
     }
 
+    /**
+     * @notice Set the USDS mint rate limit
+     * @param rateLimits The address of the rate limits contract
+     * @param maxAmount The maximum amount of USDS that can be minted
+     * @param slope The slope of the rate limit
+     */
     function setUSDSMintRateLimit(address rateLimits, uint256 maxAmount, uint256 slope) internal {
         IRateLimits(rateLimits).setRateLimitData(LIMIT_USDS_MINT, maxAmount, slope);
     }
 
+    /**
+     * @notice Set the USDS to USDC rate limit
+     * @param rateLimits The address of the rate limits contract
+     * @param maxAmount The maximum amount of USDS that can be minted
+     * @param slope The slope of the rate limit
+     */
     function setUSDSToUSDCRateLimit(address rateLimits, uint256 maxUsdcAmount, uint256 slope) internal {
         IRateLimits(rateLimits).setRateLimitData(LIMIT_USDS_TO_USDC, maxUsdcAmount, slope);
     }

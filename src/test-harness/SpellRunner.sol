@@ -6,14 +6,6 @@ import {StdChains} from "forge-std/StdChains.sol";
 import {console} from "forge-std/console.sol";
 
 import {Ethereum} from "keel-address-registry/Ethereum.sol";
-// import { Avalanche } from 'grove-address-registry/Avalanche.sol';
-// import { Arbitrum } from 'grove-address-registry/Arbitrum.sol';
-// import { Base }     from 'grove-address-registry/Base.sol';
-// import { Gnosis }   from 'grove-address-registry/Gnosis.sol';
-// import { Optimism } from 'grove-address-registry/Optimism.sol';
-// import { Unichain } from 'grove-address-registry/Unichain.sol';
-
-// import { IExecutor } from 'lib/grove-gov-relay/src/interfaces/IExecutor.sol';
 
 import {Domain, DomainHelpers} from "xchain-helpers/testing/Domain.sol";
 import {OptimismBridgeTesting} from "xchain-helpers/testing/bridges/OptimismBridgeTesting.sol";
@@ -119,36 +111,14 @@ abstract contract SpellRunner is Test {
         // ADD MORE CHAINS HERE
         string[] memory chains = new string[](1);
         chains[0] = "eth-mainnet";
-        // chains[1] = "base-mainnet";
-        // chains[2] = "arb-mainnet";
-        // chains[3] = "opt-mainnet";
-        // chains[4] = "avax-mainnet";
 
         uint256[] memory blocks = getBlocksFromDate(date, chains);
 
         console.log("   Mainnet block:", blocks[0]);
-        // console.log("      Base block:", blocks[1]);
-        // console.log("  Arbitrum block:", blocks[2]);
-        // console.log("  Optimism block:", blocks[3]);
-        // console.log(" Avalanche block:", blocks[4]);
 
-        // DEFINE CUSTOM CHAINS HERE
-        // setChain("unichain", ChainData({
-        //     name: "Unichain",
-        //     rpcUrl: vm.envString("UNICHAIN_RPC_URL"),
-        //     chainId: 130
-        // }));
 
         // CREATE FORKS WITH DYNAMICALLY DERIVED BLOCKS HERE
         chainData[ChainIdUtils.Ethereum()].domain = getChain("mainnet").createFork(blocks[0]);
-        // chainData[ChainIdUtils.Base()].domain        = getChain("base").createFork(blocks[1]);
-        // chainData[ChainIdUtils.ArbitrumOne()].domain = getChain("arbitrum_one").createFork(blocks[2]);
-        // chainData[ChainIdUtils.Optimism()].domain    = getChain("optimism").createFork(blocks[3]);
-        // chainData[ChainIdUtils.Avalanche()].domain = getChain("avalanche").createFork(blocks[4]);
-
-        // CREATE FORKS WITH STATICALLY CHOSEN BLOCKS HERE
-        // chainData[ChainIdUtils.Gnosis()].domain      = getChain("gnosis_chain").createFork(39404891);  // Gnosis block lookup is not supported by Alchemy
-        // chainData[ChainIdUtils.Unichain()].domain    = getChain("unichain").createFork(17517398);
     }
 
     function setupDomain(uint256 mainnetForkBlock) internal {
@@ -298,106 +268,7 @@ abstract contract SpellRunner is Test {
             abi.encodeWithSignature("exec(address,bytes)", payloadAddress, abi.encodeWithSignature("execute()"))
         );
         require(success, "FAILED TO EXECUTE PAYLOAD");
-        // only execute mainnet payload
-        //executeMainnetPayload();
-        // then use bridges to execute other chains' payloads
-        //_relayMessageOverBridges();
-        // execute the foreign payloads (either by simulation or real execute)
-        //_executeForeignPayloads();
     }
-
-    /// @dev bridge contracts themselves are stored on mainnet
-    // function _relayMessageOverBridges() internal onChain(ChainIdUtils.Ethereum()) {
-    //     for (uint256 i = 0; i < allChains.length; i++) {
-    //         ChainId chainId = ChainIdUtils.fromDomain(chainData[allChains[i]].domain);
-    //         for (uint256 j = 0; j < chainData[chainId].bridges.length; j++) {
-    //             _executeBridge(chainData[chainId].bridges[j]);
-    //         }
-    //     }
-    // }
-
-    /// @dev this does not relay messages from L2s to mainnet except in the case of USDC
-    // function _executeBridge(Bridge storage bridge) private {
-    //     if (bridge.bridgeType == BridgeType.OPTIMISM) {
-    //         OptimismBridgeTesting.relayMessagesToDestination(bridge, false);
-    //     } else if (bridge.bridgeType == BridgeType.CCTP) {
-    //         CCTPBridgeTesting.relayMessagesToDestination(bridge, false);
-    //         CCTPBridgeTesting.relayMessagesToSource(bridge, false);
-    //     } else if (bridge.bridgeType == BridgeType.AMB) {
-    //         AMBBridgeTesting.relayMessagesToDestination(bridge, false);
-    //     } else if (bridge.bridgeType == BridgeType.ARBITRUM) {
-    //         ArbitrumBridgeTesting.relayMessagesToDestination(bridge, false);
-    //     }
-    // }
-
-    // function _executeForeignPayloads() private onChain(ChainIdUtils.Ethereum()) {
-    //     for (uint256 i = 0; i < allChains.length; i++) {
-    //          ChainId chainId = ChainIdUtils.fromDomain(chainData[allChains[i]].domain);
-    //          if (chainId == ChainIdUtils.Ethereum()) continue; // Don't execute mainnet
-
-    //          // UNCOMMENT AFTER OTHER DOMAINS ARE SET UP
-    //          address mainnetSpellPayload = _getForeignPayloadFromMainnetSpell(chainId);
-    //          //IExecutor executor = chainData[chainId].executor;
-    //          if (mainnetSpellPayload != address(0)) {
-    //             // We assume the payload has been queued in the executor (will revert otherwise)
-    //             chainData[chainId].domain.selectFork();
-    //             uint256 actionsSetId = executor.actionsSetCount() - 1;
-    //             uint256 prevTimestamp = block.timestamp;
-    //             vm.warp(executor.getActionsSetById(actionsSetId).executionTime);
-    //             executor.execute(actionsSetId);
-    //             chainData[chainId].spellExecuted = true;
-    //             vm.warp(prevTimestamp);
-    //         } else {
-    //             // We will simulate execution until the real spell is deployed in the mainnet spell
-    //             address payload = chainData[chainId].payload;
-    //             if (payload != address(0)) {
-    //                 chainData[chainId].domain.selectFork();
-    //                 vm.prank(address(executor));
-    //                 executor.executeDelegateCall(payload, abi.encodeWithSignature("execute()"));
-    //                 chainData[chainId].spellExecuted = true;
-    //                 console.log("simulating execution payload for network: ", chainId.toDomainString());
-    //             }
-    //         }
-    //     }
-    // }
-
-    // function _getForeignPayloadFromMainnetSpell(ChainId chainId)
-    //     internal
-    //     onChain(ChainIdUtils.Ethereum())
-    //     returns (address)
-    // {
-    //     // RETURN PAYLOAD ADDRESSES FROM THE MAINNET SPELL HERE
-
-    //     KeelPayloadEthereum spell = KeelPayloadEthereum(chainData[ChainIdUtils.Ethereum()].payload);
-    //     //if (chainId == ChainIdUtils.Avalanche()) {
-    //         //return spell.PAYLOAD_AVALANCHE();
-    //         // } else if (chainId == ChainIdUtils.Base()) {
-    //         //     return spell.PAYLOAD_BASE();
-    //         // } else if (chainId == ChainIdUtils.Gnosis()) {
-    //         //     return spell.PAYLOAD_GNOSIS();
-    //         // } else if (chainId == ChainIdUtils.ArbitrumOne()) {
-    //         //     return spell.PAYLOAD_ARBITRUM();
-    //         // } else if (chainId == ChainIdUtils.Optimism()) {
-    //         //     return spell.PAYLOAD_OPTIMISM();
-    //         // } else if (chainId == ChainIdUtils.Unichain()) {
-    //         //     return spell.PAYLOAD_UNICHAIN();
-    //     } else {
-    //         revert("Unsupported chainId");
-    //     }
-    // }
-
-    // function executeMainnetPayload() internal onChain(ChainIdUtils.Ethereum()) {
-    //     address payloadAddress = chainData[ChainIdUtils.Ethereum()].payload;
-    //     // IExecutor executor = chainData[ChainIdUtils.Ethereum()].executor;
-    //     require(_isContract(payloadAddress), "PAYLOAD IS NOT A CONTRACT");
-
-    //     vm.prank(Ethereum.PAUSE_PROXY);
-    //     (bool success,) = address(executor).call(
-    //         abi.encodeWithSignature("exec(address,bytes)", payloadAddress, abi.encodeWithSignature("execute()"))
-    //     );
-    //     require(success, "FAILED TO EXECUTE PAYLOAD");
-    //     chainData[ChainIdUtils.Ethereum()].spellExecuted = true;
-    // }
 
     function _clearLogs() internal {
         RecordedLogs.clearLogs();

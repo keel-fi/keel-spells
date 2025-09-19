@@ -9,7 +9,16 @@ import {MainnetController} from "lib/keel-alm-controller/src/MainnetController.s
 
 /**
  * @title  October 02, 2025 Keel Ethereum Proposal
- * @notice Activate Keel Liquidity Layer - initiate ALM system, set rate limits, onboard Centrifuge Vault
+ * @notice Activate Keel Liquidity Layer
+ *             - Add CONTROLLER to ALMProxy
+ *             - Add CONTROLLER to RateLimits
+ *             - Add FREEZER to ALMController
+ *             - Add RELAYER to ALMController
+ *             - Add ALMProxy to AllocatorVault wards
+ *             - Add infinite approval for USDS transfer from AllocatorBuffer for ALMProxy
+ *         Set basic Keel Liquidity Layer rate limits
+ *             - Set USDS minting rate limit
+ *             - Set USDS to USDC PSM swapping rate limit
  * @author Exo Tech
  * Forum: TODO
  * Vote:  TODO -- Increase line and gap

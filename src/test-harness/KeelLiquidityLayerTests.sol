@@ -6,7 +6,6 @@ import {IERC4626} from "forge-std/interfaces/IERC4626.sol";
 
 import {CCTPForwarder} from "lib/xchain-helpers/src/forwarders/CCTPForwarder.sol";
 
-// import { Avalanche } from "grove-address-registry/Avalanche.sol";
 import {Ethereum} from "keel-address-registry/Ethereum.sol";
 
 import {IALMProxy} from "keel-alm-controller/src/interfaces/IALMProxy.sol";
@@ -282,18 +281,6 @@ abstract contract KeelLiquidityLayerTests is SpellRunner {
                 bytes32(uint256(uint160(address(0))))
             );
         }
-
-        // if (currentChain == ChainIdUtils.Ethereum()) {
-        //     assertEq(
-        //         controller.centrifugeRecipients(KeelLiquidityLayerHelpers.SOLANA_DESTINATION_CENTRIFUGE_ID),
-        //         bytes32(uint256(uint160(address(0))))
-        //     );
-        // } else {
-        //     assertEq(
-        //         controller.centrifugeRecipients(KeelLiquidityLayerHelpers.ETHEREUM_DESTINATION_CENTRIFUGE_ID),
-        //         bytes32(uint256(uint160(address(0))))
-        //     );
-        // }
 
         executeAllPayloadsAndBridges();
 
