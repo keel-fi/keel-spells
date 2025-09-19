@@ -10,12 +10,14 @@ import {Ethereum} from "lib/keel-address-registry/src/Ethereum.sol";
 
 import {RateLimitHelpers} from "lib/keel-alm-controller/src/RateLimitHelpers.sol";
 
-import {MainnetController} from "keel-alm-controller/src/MainnetController.sol";
+import {MainnetController} from "lib/keel-alm-controller/src/MainnetController.sol";
 
-import {IALMProxy} from "keel-alm-controller/src/interfaces/IALMProxy.sol";
-import {IRateLimits} from "keel-alm-controller/src/interfaces/IRateLimits.sol";
+import {IALMProxy} from "lib/keel-alm-controller/src/interfaces/IALMProxy.sol";
+import {IRateLimits} from "lib/keel-alm-controller/src/interfaces/IRateLimits.sol";
 
-import {AllocatorVault} from "dss-allocator/src/AllocatorVault.sol";
+import {AllocatorVault} from "lib/dss-allocator/src/AllocatorVault.sol";
+import {AllocatorRoles} from "lib/dss-allocator/src/AllocatorRoles.sol";
+import {AllocatorBuffer} from "lib/dss-allocator/src/AllocatorBuffer.sol";
 
 import {KeelLiquidityLayerContext, CentrifugeConfig} from "../../test-harness/KeelLiquidityLayerTests.sol";
 
@@ -51,12 +53,22 @@ contract KeelEthereum_20251002Test is KeelTestBase {
 
     function setUp() public {
         //setupDomains("2025-09-11T16:50:00Z");
-        setupDomain({ mainnetForkBlock: 23392563 });
+        setupDomain({mainnetForkBlock: 23392563});
         deployPayload(ChainIdUtils.Ethereum());
         //deployPayloads();
 
         vm.startPrank(Ethereum.PAUSE_PROXY);
         IPSMLike(address(controller.psm())).kiss(address(almProxy));
+
+        // Keel is not currently the ilk admin nor does it have ownership
+        // of the Allocator Vault and Buffer. Force Keel subproxy to have
+        // ownership over these contracts until the approproate spell has
+        // executed.
+        AllocatorRoles(Ethereum.ALLOCATOR_ROLES).setIlkAdmin("ALLOCATOR-NOVA-A", Ethereum.KEEL_PROXY);
+        AllocatorVault(Ethereum.ALLOCATOR_VAULT).rely(Ethereum.KEEL_PROXY);
+        AllocatorVault(Ethereum.ALLOCATOR_VAULT).deny(Ethereum.PAUSE_PROXY);
+        AllocatorBuffer(Ethereum.ALLOCATOR_BUFFER).rely(Ethereum.KEEL_PROXY);
+        AllocatorBuffer(Ethereum.ALLOCATOR_BUFFER).deny(Ethereum.PAUSE_PROXY);
         vm.stopPrank();
     }
 
@@ -128,16 +140,8 @@ contract KeelEthereum_20251002Test is KeelTestBase {
 
         executeAllPayloadsAndBridges();
 
-        _assertRateLimit({
-            key: controller.LIMIT_USDS_MINT(),
-            maxAmount: 10_000e18,
-            slope: 5_0000e18 / uint256(1 days)
-        });
+        _assertRateLimit({key: controller.LIMIT_USDS_MINT(), maxAmount: 10_000e18, slope: 5_0000e18 / uint256(1 days)});
 
-        _assertRateLimit({
-            key: controller.LIMIT_USDS_TO_USDC(),
-            maxAmount: 10_000e6,
-            slope: 5_000e6 / uint256(1 days)
-        });
+        _assertRateLimit({key: controller.LIMIT_USDS_TO_USDC(), maxAmount: 10_000e6, slope: 5_000e6 / uint256(1 days)});
     }
 }
