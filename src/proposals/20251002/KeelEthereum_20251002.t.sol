@@ -32,8 +32,6 @@ interface IPSMLike {
 }
 
 contract KeelEthereum_20251002Test is KeelTestBase {
-    // TODO: change to KEEL values
-    // address internal KEEL_ETHEREUM_20251002;
     address internal DEPLOYER;
 
     bytes32 internal constant ALLOCATOR_ILK = "ALLOCATOR-NOVA-A";
