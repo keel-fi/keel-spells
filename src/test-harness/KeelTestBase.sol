@@ -10,4 +10,4 @@ import {DomainHelpers} from "xchain-helpers/testing/Domain.sol";
 
 /// @dev convenience contract meant to be the single point of entry for all
 /// spell-specific test contracts
-contract KeelTestBase is CommonTestBase, CommonSpellAssertions, KeelLiquidityLayerTests {}
+abstract contract KeelTestBase is CommonTestBase, CommonSpellAssertions, KeelLiquidityLayerTests {}
