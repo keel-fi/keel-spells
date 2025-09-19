@@ -140,7 +140,7 @@ contract KeelEthereum_20251002Test is KeelTestBase {
 
         executeAllPayloadsAndBridges();
 
-        _assertRateLimit({key: controller.LIMIT_USDS_MINT(), maxAmount: 10_000e18, slope: 5_0000e18 / uint256(1 days)});
+        _assertRateLimit({key: controller.LIMIT_USDS_MINT(), maxAmount: 10_000e18, slope: 5_000e18 / uint256(1 days)});
 
         _assertRateLimit({key: controller.LIMIT_USDS_TO_USDC(), maxAmount: 10_000e6, slope: 5_000e6 / uint256(1 days)});
     }

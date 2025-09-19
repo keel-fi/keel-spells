@@ -141,8 +141,8 @@ abstract contract KeelLiquidityLayerTests is SpellRunner {
         if (chain == ChainIdUtils.Ethereum()) {
             ctx = KeelLiquidityLayerContext(
                 controller,
-                IALMProxy(0xa5139956eC99aE2e51eA39d0b57C42B6D8db0758),
-                IRateLimits(0x65E7B39e508944F7C4278d3e4580f84Eb20b26a7),
+                IALMProxy(Ethereum.ALM_PROXY),
+                IRateLimits(Ethereum.ALM_RATE_LIMITS),
                 Ethereum.ALM_RELAYER,
                 Ethereum.ALM_FREEZER
             );
