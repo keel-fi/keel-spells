@@ -23,8 +23,6 @@ import {KeelLiquidityLayerContext, CentrifugeConfig} from "../../test-harness/Ke
 
 import {KeelEthereum_20251002} from "./KeelEthereum_20251002.sol";
 
-import {console} from "forge-std/console.sol";
-
 interface IVatLike {
     function ilks(bytes32) external view returns (uint256, uint256, uint256, uint256, uint256);
 }
@@ -40,12 +38,11 @@ contract KeelEthereum_20251002Test is KeelTestBase {
 
     bytes32 internal constant ALLOCATOR_ILK = "ALLOCATOR-NOVA-A";
 
+    address internal constant SUSDS = 0xa3931d71877C0E7a3148CB7Eb4463524FEc27fbD;
+
     IALMProxy almProxy = IALMProxy(Ethereum.ALM_PROXY);
     IRateLimits rateLimits = IRateLimits(Ethereum.ALM_RATE_LIMITS);
     MainnetController controller = MainnetController(Ethereum.ALM_CONTROLLER);
-    // IALMProxy almProxy = IALMProxy(0xa5139956eC99aE2e51eA39d0b57C42B6D8db0758);
-    // IRateLimits rateLimits = IRateLimits(0x65E7B39e508944F7C4278d3e4580f84Eb20b26a7);
-    // MainnetController controller = MainnetController(0xEF26BDc34F35669C235345aeF24A251B1EE80EF3);
 
     constructor() {
         id = "20251002";
@@ -143,5 +140,9 @@ contract KeelEthereum_20251002Test is KeelTestBase {
         _assertRateLimit({key: controller.LIMIT_USDS_MINT(), maxAmount: 10_000e18, slope: 5_000e18 / uint256(1 days)});
 
         _assertRateLimit({key: controller.LIMIT_USDS_TO_USDC(), maxAmount: 10_000e6, slope: 5_000e6 / uint256(1 days)});
+    }
+
+    function test_susdsVaultOnboarding() public {
+        _testERC4626Onboarding(SUSDS, 10_000e18, 10_000e18, 5_000e18 / uint256(1 days));
     }
 }
