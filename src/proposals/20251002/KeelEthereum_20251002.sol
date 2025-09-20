@@ -19,6 +19,7 @@ import {MainnetController} from "lib/keel-alm-controller/src/MainnetController.s
  *         Set basic Keel Liquidity Layer rate limits
  *             - Set USDS minting rate limit
  *             - Set USDS to USDC PSM swapping rate limit
+ *             - Set sUSDS Deposit/Withdraw rate limit
  * @author Exo Tech
  * Forum: TODO
  * Vote:  TODO -- Increase line and gap
@@ -70,11 +71,21 @@ contract KeelEthereum_20251002 is KeelPayloadEthereum {
     }
 
     function _setupBasicRateLimits() private {
+        // Update USDS RateLimit
+        // before: 0
+        // After: 10k
         _setUSDSMintRateLimit(10_000e18, 5_000e18 / uint256(1 days));
+        
+        // Update USDS <> USDC RateLimit
+        // before: 0
+        // After: 10k
         _setUSDSToUSDCRateLimit(10_000e6, 5_000e6 / uint256(1 days));
     }
 
     function _onboardSusdsVault() private {
+        // Update sUSDS RateLimit
+        // before: 0
+        // After: 10k
         _onboardERC4626Vault(
             SUSDS,
             10_000e18,

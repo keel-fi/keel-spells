@@ -5,9 +5,6 @@ import {IERC20} from "forge-std/interfaces/IERC20.sol";
 
 import {Ethereum} from "lib/keel-address-registry/src/Ethereum.sol";
 
-// TODO: figure out do we need this?
-//import {Executor} from "lib/keel-gov-relay/src/Executor.sol";
-
 import {IALMProxy} from "lib/keel-alm-controller/src/interfaces/IALMProxy.sol";
 import {IRateLimits} from "lib/keel-alm-controller/src/interfaces/IRateLimits.sol";
 

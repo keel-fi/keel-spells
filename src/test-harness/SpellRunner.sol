@@ -140,93 +140,10 @@ abstract contract SpellRunner is Test {
 
         // DEFINE FOREIGN EXECUTORS HERE
 
-        // chainData[ChainIdUtils.Base()].executor        = IExecutor(Base.GROVE_EXECUTOR);
-        // chainData[ChainIdUtils.Gnosis()].executor      = IExecutor(Gnosis.GROVE_EXECUTOR);
-        // chainData[ChainIdUtils.ArbitrumOne()].executor = IExecutor(Arbitrum.GROVE_EXECUTOR);
-        // chainData[ChainIdUtils.Optimism()].executor    = IExecutor(Optimism.GROVE_EXECUTOR);
-        // chainData[ChainIdUtils.Unichain()].executor    = IExecutor(Unichain.GROVE_EXECUTOR);
-
         // CREATE BRIDGES HERE
-
-        // Arbitrum One
-        // chainData[ChainIdUtils.ArbitrumOne()].bridges.push(
-        //     ArbitrumBridgeTesting.createNativeBridge(
-        //         chainData[ChainIdUtils.Ethereum()].domain,
-        //         chainData[ChainIdUtils.ArbitrumOne()].domain
-        //     )
-        // );
-        // chainData[ChainIdUtils.ArbitrumOne()].bridges.push(
-        //     CCTPBridgeTesting.createCircleBridge(
-        //         chainData[ChainIdUtils.Ethereum()].domain,
-        //         chainData[ChainIdUtils.ArbitrumOne()].domain
-        //     )
-        // );
-
-        // Base
-        // chainData[ChainIdUtils.Base()].bridges.push(
-        //     OptimismBridgeTesting.createNativeBridge(
-        //         chainData[ChainIdUtils.Ethereum()].domain,
-        //         chainData[ChainIdUtils.Base()].domain
-        //     )
-        // );
-        // chainData[ChainIdUtils.Base()].bridges.push(
-        //     CCTPBridgeTesting.createCircleBridge(
-        //         chainData[ChainIdUtils.Ethereum()].domain,
-        //         chainData[ChainIdUtils.Base()].domain
-        //     )
-        // );
-
-        // Gnosis
-        // chainData[ChainIdUtils.Gnosis()].bridges.push(
-        //     AMBBridgeTesting.createGnosisBridge(
-        //         chainData[ChainIdUtils.Ethereum()].domain,
-        //         chainData[ChainIdUtils.Gnosis()].domain
-        //     )
-        // );
-
-        // Optimism
-        // chainData[ChainIdUtils.Optimism()].bridges.push(
-        //     OptimismBridgeTesting.createNativeBridge(
-        //         chainData[ChainIdUtils.Ethereum()].domain,
-        //         chainData[ChainIdUtils.Optimism()].domain
-        //     )
-        // );
-        // chainData[ChainIdUtils.Optimism()].bridges.push(
-        //     CCTPBridgeTesting.createCircleBridge(
-        //         chainData[ChainIdUtils.Ethereum()].domain,
-        //         chainData[ChainIdUtils.Optimism()].domain
-        //     )
-        // );
-
-        // Unichain
-        // chainData[ChainIdUtils.Unichain()].bridges.push(
-        //     OptimismBridgeTesting.createNativeBridge(
-        //         chainData[ChainIdUtils.Ethereum()].domain,
-        //         chainData[ChainIdUtils.Unichain()].domain
-        //     )
-        // );
-        // chainData[ChainIdUtils.Unichain()].bridges.push(
-        //     CCTPBridgeTesting.createCircleBridge(
-        //         chainData[ChainIdUtils.Ethereum()].domain,
-        //         chainData[ChainIdUtils.Unichain()].domain
-        //     )
-        // );
-
-        // Avalanche
-        // chainData[ChainIdUtils.Avalanche()].bridges.push(
-        //     CCTPBridgeTesting.createCircleBridge(
-        //         chainData[ChainIdUtils.Ethereum()].domain, chainData[ChainIdUtils.Avalanche()].domain
-        //     )
-        // );
 
         // REGISTER CHAINS HERE
         allChains.push(ChainIdUtils.Ethereum());
-        //allChains.push(ChainIdUtils.Avalanche());
-        // allChains.push(ChainIdUtils.Base());
-        // allChains.push(ChainIdUtils.Gnosis());
-        // allChains.push(ChainIdUtils.ArbitrumOne());
-        // allChains.push(ChainIdUtils.Optimism());
-        // allChains.push(ChainIdUtils.Unichain());
     }
 
     function spellIdentifier(ChainId chainId) private view returns (string memory) {

@@ -8,7 +8,6 @@ import {IERC20} from "forge-std/interfaces/IERC20.sol";
 
 library ChainIds {
     uint256 constant MAINNET = 1;
-    // TODO: add solana chain id
 }
 
 contract CommonTestBase is Test {
