@@ -27,9 +27,16 @@ contract KeelEthereum_20251030 is KeelPayloadEthereum {
     }
 
     function _configureController() internal {
+        // Update mint recipient for CCTP bridge
+        // before: 0x0000000000000000000000000000000000000000
+        // After: SVM_CONTROLLER_AUTHORITY
         MainnetController(Ethereum.ALM_CONTROLLER).setMintRecipient(
             SVM_CCTP_DESTINATION_ENDPOINT_ID, bytes32(bytes20(uint160(SVM_CONTROLLER_AUTHORITY)))
         );
+
+        // Update layer zero recipient for LZ bridge
+        // before: 0x0000000000000000000000000000000000000000
+        // After: SVM_CONTROLLER_AUTHORITY
         MainnetController(Ethereum.ALM_CONTROLLER).setLayerZeroRecipient(
             SVM_LZ_DESTINATION_ENDPOINT_ID, bytes32(bytes20(uint160(SVM_CONTROLLER_AUTHORITY)))
         );
