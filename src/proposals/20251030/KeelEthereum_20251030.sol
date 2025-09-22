@@ -9,9 +9,11 @@ import {MainnetController} from "lib/keel-alm-controller/src/MainnetController.s
 
 /**
  * @title  October 30, 2025 Keel Ethereum Proposal
- * @notice Configure ALM Controller
- *         - Set CCTP bridge address with Solana destination as the controller_authority address
- *         - Set LZ bridge address with Solana destination as the controller_authority address
+ * @notice Configure ALM Controller Bridging
+ *             - Set CCTP bridge address with Solana destination as the controller_authority address
+ *             - Set LZ bridge address with Solana destination as the controller_authority address
+ *         Configure ALM Contreoller Permissions
+ *             - ManagePermissions and revoke all Hot Wallet privileges
  * @author Exo Tech
  * Forum: TODO
  * Vote:  TODO
@@ -23,10 +25,11 @@ contract KeelEthereum_20251030 is KeelPayloadEthereum {
     uint32 internal constant SVM_LZ_DESTINATION_ENDPOINT_ID = 40168;
 
     function _execute() internal override {
-        _configureController();
+        _configureControllerBridging();
+        _configureControllerPermissions();
     }
 
-    function _configureController() internal {
+    function _configureControllerBridging() internal {
         // Update mint recipient for CCTP bridge
         // before: 0x0000000000000000000000000000000000000000
         // After: SVM_CONTROLLER_AUTHORITY
@@ -40,5 +43,11 @@ contract KeelEthereum_20251030 is KeelPayloadEthereum {
         MainnetController(Ethereum.ALM_CONTROLLER).setLayerZeroRecipient(
             SVM_LZ_DESTINATION_ENDPOINT_ID, bytes32(bytes20(uint160(SVM_CONTROLLER_AUTHORITY)))
         );
+    }
+
+    function _configureControllerPermissions() internal {
+        // Manage Permissions and revoke all Hot Wallet privileges
+        // This will be a crosschain instruction sent through Sky's LayerZero governance OAPP
+        // TODO: implement
     }
 }
