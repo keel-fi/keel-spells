@@ -116,7 +116,6 @@ abstract contract SpellRunner is Test {
 
         console.log("   Mainnet block:", blocks[0]);
 
-
         // CREATE FORKS WITH DYNAMICALLY DERIVED BLOCKS HERE
         chainData[ChainIdUtils.Ethereum()].domain = getChain("mainnet").createFork(blocks[0]);
     }

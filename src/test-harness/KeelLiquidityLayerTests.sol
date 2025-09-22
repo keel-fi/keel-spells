@@ -225,8 +225,6 @@ abstract contract KeelLiquidityLayerTests is SpellRunner {
         );
         assertEq(ctx.rateLimits.getCurrentRateLimit(withdrawKey), type(uint256).max);
 
-        console.log(ctx.rateLimits.getCurrentRateLimit(depositKey));
-
         vm.prank(ctx.relayer);
         MainnetController(ctx.controller).withdrawERC4626(vault, expectedDepositAmount / 2);
 

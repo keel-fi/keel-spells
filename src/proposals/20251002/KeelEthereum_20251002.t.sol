@@ -133,8 +133,26 @@ contract KeelEthereum_20251002Test is KeelTestBase {
 
         executeAllPayloadsAndBridges();
 
-        _assertRateLimit({key: controller.LIMIT_USDS_MINT(), maxAmount: 10_000e18, slope: 5_000e18 / uint256(1 days)});
+        uint256 mintAndBurnAmount = 5_000e18;
+        uint256 swapAmount = 5_000e6;
 
+        vm.prank(Ethereum.ALM_RELAYER);
+        controller.mintUSDS(mintAndBurnAmount);
+        vm.prank(Ethereum.ALM_RELAYER);
+        controller.swapUSDSToUSDC(swapAmount);
+
+        assertEq(rateLimits.getCurrentRateLimit(controller.LIMIT_USDS_MINT()), 5_000e18);
+        assertEq(rateLimits.getCurrentRateLimit(controller.LIMIT_USDS_TO_USDC()), 5_000e6);
+
+        vm.prank(Ethereum.ALM_RELAYER);
+        controller.swapUSDCToUSDS(swapAmount);
+        vm.prank(Ethereum.ALM_RELAYER);
+        controller.burnUSDS(mintAndBurnAmount);
+
+        assertEq(rateLimits.getCurrentRateLimit(controller.LIMIT_USDS_MINT()), 10_000e18);
+        assertEq(rateLimits.getCurrentRateLimit(controller.LIMIT_USDS_TO_USDC()), 10_000e6);
+
+        _assertRateLimit({key: controller.LIMIT_USDS_MINT(), maxAmount: 10_000e18, slope: 5_000e18 / uint256(1 days)});
         _assertRateLimit({key: controller.LIMIT_USDS_TO_USDC(), maxAmount: 10_000e6, slope: 5_000e6 / uint256(1 days)});
     }
 

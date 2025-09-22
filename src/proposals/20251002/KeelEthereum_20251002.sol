@@ -26,7 +26,6 @@ import {MainnetController} from "lib/keel-alm-controller/src/MainnetController.s
  *        TODO -- Activate Liquidity Layer
  */
 contract KeelEthereum_20251002 is KeelPayloadEthereum {
-
     address internal constant SUSDS = 0xa3931d71877C0E7a3148CB7Eb4463524FEc27fbD;
 
     function _execute() internal override {
@@ -75,7 +74,7 @@ contract KeelEthereum_20251002 is KeelPayloadEthereum {
         // before: 0
         // After: 10k
         _setUSDSMintRateLimit(10_000e18, 5_000e18 / uint256(1 days));
-        
+
         // Update USDS <> USDC RateLimit
         // before: 0
         // After: 10k
@@ -86,11 +85,7 @@ contract KeelEthereum_20251002 is KeelPayloadEthereum {
         // Update sUSDS RateLimit
         // before: 0
         // After: 10k
-        _onboardERC4626Vault(
-            SUSDS,
-            10_000e18,
-            5_000e18 / uint256(1 days)
-        );
+        _onboardERC4626Vault(SUSDS, 10_000e18, 5_000e18 / uint256(1 days));
     }
 
     function _createRelayersArray() private pure returns (address[] memory) {
