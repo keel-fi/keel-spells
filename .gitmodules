@@ -1,0 +1,15 @@
+[submodule "lib/forge-std"]
+	path = lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "lib/keel-address-registry"]
+	path = lib/keel-address-registry
+	url = https://github.com/keel-fi/keel-address-registry
+[submodule "lib/xchain-helpers"]
+	path = lib/xchain-helpers
+	url = https://github.com/sparkdotfi/xchain-helpers
+[submodule "lib/dss-allocator"]
+	path = lib/dss-allocator
+	url = https://github.com/makerdao/dss-allocator
+[submodule "lib/keel-alm-controller"]
+	path = lib/keel-alm-controller
+	url = https://github.com/keel-fi/keel-alm-controller
