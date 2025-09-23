@@ -121,7 +121,13 @@ abstract contract SpellRunner is Test {
     }
 
     function setupDomain(uint256 mainnetForkBlock) internal {
-        vm.createSelectFork(getChain("mainnet").rpcUrl, mainnetForkBlock);
+        string memory mainnetRpcUrl;
+        try vm.envString("MAINNET_RPC_URL") returns (string memory envRpcUrl) {
+            mainnetRpcUrl = envRpcUrl;
+        } catch {
+            mainnetRpcUrl = getChain("mainnet").rpcUrl;
+        }
+        vm.createSelectFork(mainnetRpcUrl, mainnetForkBlock);
         chainData[ChainIdUtils.Ethereum()].executor = Ethereum.KEEL_PROXY;
     }
 
