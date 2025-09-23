@@ -194,11 +194,6 @@ abstract contract KeelLiquidityLayerTests is SpellRunner {
         _assertZeroRateLimit(depositKey);
         _assertZeroRateLimit(withdrawKey);
 
-        // TODO: uncomment this once the relayer is going to be properly set before the payload execution
-        // vm.prank(ctx.relayer);
-        // vm.expectRevert("RateLimits/zero-maxAmount");
-        // MainnetController(ctx.controller).depositERC4626(vault, expectedDepositAmount);
-
         executeAllPayloadsAndBridges();
 
         // Reload the context after spell execution to get the new controller after potential controller upgrade
@@ -245,62 +240,6 @@ abstract contract KeelLiquidityLayerTests is SpellRunner {
             // It shouldn"t take more than 30 days to recharge to max
             uint256 monthlySlope = depositSlope * 30 days;
             assertGe(monthlySlope, depositMax);
-        }
-    }
-
-    function _testControllerUpgrade(address oldController, address newController) internal {
-        ChainId currentChain = ChainIdUtils.fromUint(block.chainid);
-
-        KeelLiquidityLayerContext memory ctx = _getKeelLiquidityLayerContext();
-
-        // Note the functions used are interchangable with mainnet and foreign controllers
-        MainnetController controller = MainnetController(newController);
-
-        bytes32 CONTROLLER = ctx.proxy.CONTROLLER();
-        bytes32 RELAYER = controller.RELAYER();
-        bytes32 FREEZER = controller.FREEZER();
-
-        assertEq(ctx.proxy.hasRole(CONTROLLER, oldController), true);
-        assertEq(ctx.proxy.hasRole(CONTROLLER, newController), false);
-
-        assertEq(ctx.rateLimits.hasRole(CONTROLLER, oldController), true);
-        assertEq(ctx.rateLimits.hasRole(CONTROLLER, newController), false);
-
-        assertEq(controller.hasRole(RELAYER, ctx.relayer), false);
-        assertEq(controller.hasRole(FREEZER, ctx.freezer), false);
-
-        if (currentChain == ChainIdUtils.Ethereum()) {
-            assertEq(
-                controller.mintRecipients(CCTPForwarder.DOMAIN_ID_CIRCLE_SOLANA), bytes32(uint256(uint160(address(0))))
-            );
-        } else {
-            assertEq(
-                controller.mintRecipients(CCTPForwarder.DOMAIN_ID_CIRCLE_ETHEREUM),
-                bytes32(uint256(uint160(address(0))))
-            );
-        }
-
-        executeAllPayloadsAndBridges();
-
-        assertEq(ctx.proxy.hasRole(CONTROLLER, oldController), false);
-        assertEq(ctx.proxy.hasRole(CONTROLLER, newController), true);
-
-        assertEq(ctx.rateLimits.hasRole(CONTROLLER, oldController), false);
-        assertEq(ctx.rateLimits.hasRole(CONTROLLER, newController), true);
-
-        assertEq(controller.hasRole(RELAYER, ctx.relayer), true);
-        assertEq(controller.hasRole(FREEZER, ctx.freezer), true);
-
-        if (currentChain == ChainIdUtils.Ethereum()) {
-            assertEq(
-                controller.mintRecipients(CCTPForwarder.DOMAIN_ID_CIRCLE_SOLANA),
-                bytes32(uint256(uint160(Ethereum.ALM_PROXY)))
-            );
-        } else {
-            assertEq(
-                controller.mintRecipients(CCTPForwarder.DOMAIN_ID_CIRCLE_ETHEREUM),
-                bytes32(uint256(uint160(Ethereum.ALM_PROXY)))
-            );
         }
     }
 }
