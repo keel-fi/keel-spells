@@ -36,8 +36,6 @@ contract KeelEthereum_20251002Test is KeelTestBase {
 
     bytes32 internal constant ALLOCATOR_ILK = "ALLOCATOR-NOVA-A";
 
-    address internal constant SUSDS = 0xa3931d71877C0E7a3148CB7Eb4463524FEc27fbD;
-
     IALMProxy almProxy = IALMProxy(Ethereum.ALM_PROXY);
     IRateLimits rateLimits = IRateLimits(Ethereum.ALM_RATE_LIMITS);
     MainnetController controller = MainnetController(Ethereum.ALM_CONTROLLER);
@@ -157,6 +155,6 @@ contract KeelEthereum_20251002Test is KeelTestBase {
     }
 
     function test_susdsVaultOnboarding() public {
-        _testERC4626Onboarding(SUSDS, 10_000e18, 10_000e18, 5_000e18 / uint256(1 days));
+        _testERC4626Onboarding(Ethereum.SUSDS, 10_000e18, 10_000e18, 5_000e18 / uint256(1 days));
     }
 }

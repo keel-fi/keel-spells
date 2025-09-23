@@ -21,12 +21,11 @@ import {MainnetController} from "lib/keel-alm-controller/src/MainnetController.s
  *             - Set USDS to USDC PSM swapping rate limit
  *             - Set sUSDS Deposit/Withdraw rate limit
  * @author Exo Tech
- * Forum: TODO
+ * Forum: https://forum.sky.money/t/october-02-2025-prime-technical-scope-keel-initialization-for-upcoming-spell/27192
  * Vote:  TODO -- Increase line and gap
  *        TODO -- Activate Liquidity Layer
  */
 contract KeelEthereum_20251002 is KeelPayloadEthereum {
-    address internal constant SUSDS = 0xa3931d71877C0E7a3148CB7Eb4463524FEc27fbD;
 
     function _execute() internal override {
         _initiateAlmSystem();
@@ -85,14 +84,14 @@ contract KeelEthereum_20251002 is KeelPayloadEthereum {
         // Update sUSDS RateLimit
         // before: 0
         // After: 10k
-        _onboardERC4626Vault(SUSDS, 10_000e18, 5_000e18 / uint256(1 days));
+        _onboardERC4626Vault(Ethereum.SUSDS, 10_000e18, 5_000e18 / uint256(1 days));
     }
 
     function _createRelayersArray() private pure returns (address[] memory) {
         address[] memory relayers = new address[](2);
         relayers[0] = Ethereum.ALM_RELAYER;
         // Keel Relayer C (Backup)
-        relayers[1] = 0x0f72935f6de6C54Ce8056FD040d4Ddb012B7cd54;
+        relayers[1] = Ethereum.ALM_RELAYER2;
         return relayers;
     }
 }
