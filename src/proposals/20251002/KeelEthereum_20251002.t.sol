@@ -104,6 +104,7 @@ contract KeelEthereum_20251002Test is KeelTestBase {
 
         assertEq(controller.hasRole(controller.FREEZER(), Ethereum.ALM_FREEZER), true, "incorrect-freezer-controller");
         assertEq(controller.hasRole(controller.RELAYER(), Ethereum.ALM_RELAYER), true, "incorrect-relayer-controller");
+        assertEq(controller.hasRole(controller.RELAYER(), Ethereum.ALM_RELAYER_BACKUP), true, "incorrect-relayer-controller");
 
         assertEq(AllocatorVault(Ethereum.ALLOCATOR_VAULT).wards(Ethereum.ALM_PROXY), 1, "incorrect-vault-ward");
 
