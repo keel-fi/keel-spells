@@ -91,7 +91,7 @@ contract KeelEthereum_20251002 is KeelPayloadEthereum {
         address[] memory relayers = new address[](2);
         relayers[0] = Ethereum.ALM_RELAYER;
         // Keel Relayer C (Backup)
-        relayers[1] = 0x0f72935f6de6C54Ce8056FD040d4Ddb012B7cd54;
+        relayers[1] = Ethereum.ALM_RELAYER_BACKUP;
         return relayers;
     }
 }
