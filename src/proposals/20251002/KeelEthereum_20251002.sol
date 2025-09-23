@@ -15,7 +15,6 @@ import {MainnetController} from "lib/keel-alm-controller/src/MainnetController.s
  * Vote:  https://vote.sky.money/polling/QmWfqZRS
  */
 contract KeelEthereum_20251002 is KeelPayloadEthereum {
-
     function _execute() internal override {
         _initiateAlmSystem();
         _setupBasicRateLimits();
