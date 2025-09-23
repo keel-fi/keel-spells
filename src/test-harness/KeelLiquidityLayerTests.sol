@@ -292,7 +292,6 @@ abstract contract KeelLiquidityLayerTests is SpellRunner {
         assertEq(controller.hasRole(FREEZER, ctx.freezer), true);
 
         if (currentChain == ChainIdUtils.Ethereum()) {
-            // TODO: what should we use for mint recipients?
             assertEq(
                 controller.mintRecipients(CCTPForwarder.DOMAIN_ID_CIRCLE_SOLANA),
                 bytes32(uint256(uint160(Ethereum.ALM_PROXY)))

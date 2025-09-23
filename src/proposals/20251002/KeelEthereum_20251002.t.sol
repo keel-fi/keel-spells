@@ -45,21 +45,11 @@ contract KeelEthereum_20251002Test is KeelTestBase {
     }
 
     function setUp() public {
-        setupDomain({mainnetForkBlock: 23392563});
+        setupDomain({mainnetForkBlock: 23426451});
         deployPayload(ChainIdUtils.Ethereum());
 
         vm.startPrank(Ethereum.PAUSE_PROXY);
         IPSMLike(address(controller.psm())).kiss(address(almProxy));
-
-        // Keel is not currently the ilk admin nor does it have ownership
-        // of the Allocator Vault and Buffer. Force Keel subproxy to have
-        // ownership over these contracts until the approproate spell has
-        // executed.
-        AllocatorRoles(Ethereum.ALLOCATOR_ROLES).setIlkAdmin("ALLOCATOR-NOVA-A", Ethereum.KEEL_PROXY);
-        AllocatorVault(Ethereum.ALLOCATOR_VAULT).rely(Ethereum.KEEL_PROXY);
-        AllocatorVault(Ethereum.ALLOCATOR_VAULT).deny(Ethereum.PAUSE_PROXY);
-        AllocatorBuffer(Ethereum.ALLOCATOR_BUFFER).rely(Ethereum.KEEL_PROXY);
-        AllocatorBuffer(Ethereum.ALLOCATOR_BUFFER).deny(Ethereum.PAUSE_PROXY);
         vm.stopPrank();
     }
 
