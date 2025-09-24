@@ -12,7 +12,6 @@ import {OptimismBridgeTesting} from "xchain-helpers/testing/bridges/OptimismBrid
 import {AMBBridgeTesting} from "xchain-helpers/testing/bridges/AMBBridgeTesting.sol";
 import {ArbitrumBridgeTesting} from "xchain-helpers/testing/bridges/ArbitrumBridgeTesting.sol";
 import {CCTPBridgeTesting} from "xchain-helpers/testing/bridges/CCTPBridgeTesting.sol";
-import {Bridge, BridgeType} from "xchain-helpers/testing/Bridge.sol";
 import {RecordedLogs} from "xchain-helpers/testing/utils/RecordedLogs.sol";
 
 import {ChainIdUtils, ChainId} from "../libraries/ChainId.sol";
@@ -27,11 +26,6 @@ abstract contract SpellRunner is Test {
         address payload;
         address executor;
         Domain domain;
-        /// @notice on mainnet: empty
-        /// on L2s: bridges that'll include txs in the L2. there can be multiple
-        /// bridges for a given chain, such as canonical OP bridge and CCTP
-        /// USDC-specific bridge
-        Bridge[] bridges;
         address prevController;
         address newController;
         bool spellExecuted;
@@ -190,19 +184,6 @@ abstract contract SpellRunner is Test {
             abi.encodeWithSignature("exec(address,bytes)", payloadAddress, abi.encodeWithSignature("execute()"))
         );
         require(success, "FAILED TO EXECUTE PAYLOAD");
-    }
-
-    function _clearLogs() internal {
-        RecordedLogs.clearLogs();
-
-        // Need to also reset all bridge indicies
-        for (uint256 i = 0; i < allChains.length; i++) {
-            ChainId chainId = ChainIdUtils.fromDomain(chainData[allChains[i]].domain);
-            for (uint256 j = 0; j < chainData[chainId].bridges.length; j++) {
-                chainData[chainId].bridges[j].lastSourceLogIndex = 0;
-                chainData[chainId].bridges[j].lastDestinationLogIndex = 0;
-            }
-        }
     }
 
     function _isContract(address account) internal view returns (bool) {

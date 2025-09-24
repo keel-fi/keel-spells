@@ -25,8 +25,6 @@ contract KeelEthereum_20251002 is KeelPayloadEthereum {
         MainnetControllerInit.MintRecipient[] memory mintRecipients = new MainnetControllerInit.MintRecipient[](0);
         MainnetControllerInit.LayerZeroRecipient[] memory layerZeroRecipients =
             new MainnetControllerInit.LayerZeroRecipient[](0);
-        MainnetControllerInit.MaxSlippageParams[] memory maxSlippageParams =
-            new MainnetControllerInit.MaxSlippageParams[](0);
 
         MainnetControllerInit.initAlmSystem({
             vault: Ethereum.ALLOCATOR_VAULT,
@@ -51,8 +49,7 @@ contract KeelEthereum_20251002 is KeelPayloadEthereum {
                 cctp: Ethereum.CCTP_TOKEN_MESSENGER
             }),
             mintRecipients: mintRecipients,
-            layerZeroRecipients: layerZeroRecipients,
-            maxSlippageParams: maxSlippageParams
+            layerZeroRecipients: layerZeroRecipients
         });
     }
 
