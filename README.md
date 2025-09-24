@@ -65,5 +65,5 @@ forge test --match-test "testSpellExecution"
 The project uses Foundry with the following key settings in `foundry.toml`:
 - Solidity version: 0.8.25
 - EVM version: Cancun
-- Optimizer: Enabled
+- Optimizer: Disabled
 - FFI: Enabled (for external calls)
