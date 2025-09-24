@@ -22,6 +22,23 @@ abstract contract CommonSpellAssertions is SpellRunner {
         _assertPayloadBytecodeMatches(ChainIdUtils.Ethereum());
     }
 
+    function test_ETHEREUM_ExecutionCost() public {
+        uint256 startGas = gasleft();
+        executeAllPayloadsAndBridges();
+        uint256 endGas = gasleft();
+        uint256 totalGas = startGas - endGas;
+        
+        // Warn if deploy exceeds block target size
+        if (totalGas > 15_000_000) {
+            emit log("Warn: deploy gas exceeds average block target");
+            emit log_named_uint("    deploy gas", totalGas);
+            emit log_named_uint("  block target", 15_000_000);
+        }
+
+        // Fail if deploy is too expensive
+        assertLe(totalGas, 30_000_000, "TestError/spell-deploy-cost-too-high");
+    }
+
     function _assertPayloadBytecodeMatches(ChainId chainId) private onChain(chainId) {
         address actualPayload = chainData[chainId].payload;
         vm.skip(actualPayload == address(0));
