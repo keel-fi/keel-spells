@@ -27,7 +27,7 @@ abstract contract CommonSpellAssertions is SpellRunner {
         executeAllPayloadsAndBridges();
         uint256 endGas = gasleft();
         uint256 totalGas = startGas - endGas;
-        
+
         // Warn if deploy exceeds block target size
         if (totalGas > 15_000_000) {
             emit log("Warn: deploy gas exceeds average block target");
