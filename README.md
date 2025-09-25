@@ -67,3 +67,9 @@ The project uses Foundry with the following key settings in `foundry.toml`:
 - EVM version: Cancun
 - Optimizer: Disabled
 - FFI: Enabled (for external calls)
+
+## Deploy Spell
+
+```
+forge create src/proposals/<DATE>/<SpellContract.sol>:SpellContract --rpc-url <YOUR_RPC_URL> --etherscan-api-key <ETHERSCAN_API_KEY> --private-key <YOUR_PRIVATE_KEY> --broadcast --verify
+```
