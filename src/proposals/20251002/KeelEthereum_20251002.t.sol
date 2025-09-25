@@ -32,7 +32,8 @@ interface IPSMLike {
 }
 
 contract KeelEthereum_20251002Test is KeelTestBase {
-    address internal DEPLOYER = 0xDf1059F166949507ed16531289C946b3FFf6C80C;
+    address internal constant KEEL_ETHEREUM_20251002 = 0x7ae136b7e677C6A9B909a0ef0a4E29f0a1c3c7fE;
+    address internal constant DEPLOYER               = 0xDf1059F166949507ed16531289C946b3FFf6C80C;
 
     bytes32 internal constant ALLOCATOR_ILK = "ALLOCATOR-NOVA-A";
 
@@ -45,8 +46,9 @@ contract KeelEthereum_20251002Test is KeelTestBase {
     }
 
     function setUp() public {
-        setupDomain({mainnetForkBlock: 23426451});
-        deployPayload(ChainIdUtils.Ethereum());
+        setupDomain({mainnetForkBlock: 23440902});
+
+        chainData[ChainIdUtils.Ethereum()].payload = KEEL_ETHEREUM_20251002;
 
         vm.startPrank(Ethereum.PAUSE_PROXY);
         IPSMLike(address(controller.psm())).kiss(address(almProxy));
