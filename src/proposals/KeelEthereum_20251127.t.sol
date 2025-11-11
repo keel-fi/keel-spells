@@ -29,7 +29,7 @@ contract KeelEthereum_20251127Test is KeelTestBase {
     }
 
     function setUp() public {
-        setupDomain({mainnetForkBlock: 23184872});
+        setupDomain({mainnetForkBlock: 23777504});
         deployPayload(ChainIdUtils.Ethereum());
     }
 
