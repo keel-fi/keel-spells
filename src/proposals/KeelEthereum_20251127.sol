@@ -40,8 +40,10 @@ contract KeelEthereum_20251127 is KeelPayloadEthereum {
         // Update USDC to CCTP General RateLimit
         // before: 0
         // After: 100M
-        bytes32 generaltCctpKey = MainnetController(Ethereum.ALM_CONTROLLER).LIMIT_USDC_TO_CCTP();
-        IRateLimits(rateLimits).setRateLimitData(generalCctpKey, 100_000_000e6, 50_000_000e6 / uint256(1 days));
+        bytes32 generalCctpKey = MainnetController(Ethereum.ALM_CONTROLLER).LIMIT_USDC_TO_CCTP();
+        IRateLimits(Ethereum.ALM_RATE_LIMITS).setRateLimitData(
+            generalCctpKey, 100_000_000e6, 50_000_000e6 / uint256(1 days)
+        );
 
         // Update USDC to CCTP Solana RateLimit
         // before: 0
@@ -49,14 +51,23 @@ contract KeelEthereum_20251127 is KeelPayloadEthereum {
         bytes32 solanaCctpKey = RateLimitHelpers.makeDomainKey(
             MainnetController(Ethereum.ALM_CONTROLLER).LIMIT_USDC_TO_DOMAIN(), CCTPForwarder.DOMAIN_ID_CIRCLE_SOLANA
         );
-        IRateLimits(rateLimits).setRateLimitData(solanaCctpKey, 100_000_000e6, 50_000_000e6 / uint256(1 days));
-
-        bytes32 solanaLayerZeroKey = RateLimitHelpers.makeAssetDestinationKey(
-            MainnetController(Ethereum.ALM_CONTROLLER).LIMIT_LAYERZERO_TRANSFER(),
-            Ethereum.USDS,
-            SOLANA_LAYERZERO_DESTINATION
+        IRateLimits(Ethereum.ALM_RATE_LIMITS).setRateLimitData(
+            solanaCctpKey, 100_000_000e6, 50_000_000e6 / uint256(1 days)
         );
-        IRateLimits(rateLimits).setRateLimitData(solanaLayerZeroKey, 100_000_000e18, 50_000_000e18 / uint256(1 days));
+
+        // Update USDS to LayerZero Solana RateLimit
+        // before: 0
+        // After: 100M
+        bytes32 solanaLayerZeroKey = keccak256(
+            abi.encode(
+                MainnetController(Ethereum.ALM_CONTROLLER).LIMIT_LAYERZERO_TRANSFER(),
+                Ethereum.USDS,
+                SOLANA_LAYERZERO_DESTINATION
+            )
+        );
+        IRateLimits(Ethereum.ALM_RATE_LIMITS).setRateLimitData(
+            solanaLayerZeroKey, 100_000_000e18, 50_000_000e18 / uint256(1 days)
+        );
     }
 
     function _setRecipeints() internal {
