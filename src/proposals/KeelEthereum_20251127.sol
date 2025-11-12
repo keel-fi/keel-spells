@@ -44,9 +44,8 @@ contract KeelEthereum_20251127 is KeelPayloadEthereum {
         // before: 0
         // After: 100M
         bytes32 generalCctpKey = MainnetController(Ethereum.ALM_CONTROLLER).LIMIT_USDC_TO_CCTP();
-        IRateLimits(Ethereum.ALM_RATE_LIMITS).setRateLimitData(
-            generalCctpKey, 100_000_000e6, 50_000_000e6 / uint256(1 days)
-        );
+        IRateLimits(Ethereum.ALM_RATE_LIMITS)
+            .setRateLimitData(generalCctpKey, 100_000_000e6, 50_000_000e6 / uint256(1 days));
 
         // Update USDC to CCTP Solana RateLimit
         // before: 0
@@ -54,9 +53,8 @@ contract KeelEthereum_20251127 is KeelPayloadEthereum {
         bytes32 solanaCctpKey = RateLimitHelpers.makeDomainKey(
             MainnetController(Ethereum.ALM_CONTROLLER).LIMIT_USDC_TO_DOMAIN(), CCTPForwarder.DOMAIN_ID_CIRCLE_SOLANA
         );
-        IRateLimits(Ethereum.ALM_RATE_LIMITS).setRateLimitData(
-            solanaCctpKey, 100_000_000e6, 50_000_000e6 / uint256(1 days)
-        );
+        IRateLimits(Ethereum.ALM_RATE_LIMITS)
+            .setRateLimitData(solanaCctpKey, 100_000_000e6, 50_000_000e6 / uint256(1 days));
 
         // Update USDS to LayerZero Solana RateLimit
         // before: 0
@@ -68,18 +66,16 @@ contract KeelEthereum_20251127 is KeelPayloadEthereum {
                 SOLANA_LAYERZERO_DESTINATION
             )
         );
-        IRateLimits(Ethereum.ALM_RATE_LIMITS).setRateLimitData(
-            solanaLayerZeroKey, 100_000_000e18, 50_000_000e18 / uint256(1 days)
-        );
+        IRateLimits(Ethereum.ALM_RATE_LIMITS)
+            .setRateLimitData(solanaLayerZeroKey, 100_000_000e18, 50_000_000e18 / uint256(1 days));
     }
 
     function _setRecipients() internal {
         // Update CCTP Mint recipient
         // before: 0
         // After: SOLANA_RECIPIENT
-        MainnetController(Ethereum.ALM_CONTROLLER).setMintRecipient(
-            CCTPForwarder.DOMAIN_ID_CIRCLE_SOLANA, SOLANA_RECIPIENT
-        );
+        MainnetController(Ethereum.ALM_CONTROLLER)
+            .setMintRecipient(CCTPForwarder.DOMAIN_ID_CIRCLE_SOLANA, SOLANA_RECIPIENT);
 
         // Update LayerZero Mint recipient
         // before: 0
