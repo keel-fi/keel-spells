@@ -87,9 +87,6 @@ contract MockOFT {
 contract KeelEthereum_20251127Test is KeelTestBase {
     // https://docs.layerzero.network/v2/deployments/deployed-contracts?stages=mainnet&chains=solana
     uint32 internal constant SOLANA_LAYERZERO_DESTINATION = 30168;
-    // This was calculated by decoding the Solana base58 address `EeWDutgcKNTdQGJkGRrWYmTXXuKnPUZNvXepbLkQrxW4` into hex
-    bytes32 internal constant SOLANA_RECIPIENT = 0xcac3764c231540dd2364f24c78fe8f491c08c42ef2ed370f22904eda9ac48609;
-    address internal constant USDS_OFT = 0x1e1D42781FC170EF9da004Fb735f56F0276d01B8;
 
     uint256 internal constant TRANSFER_LIMIT_E6 = 100_000_000e6;
     uint256 internal constant TRANSFER_SLOPE_E6 = 50_000_000e6 / uint256(1 days);
@@ -115,8 +112,11 @@ contract KeelEthereum_20251127Test is KeelTestBase {
         generalCctpKey = controller.LIMIT_USDC_TO_CCTP();
         solanaCctpKey =
             RateLimitHelpers.makeDomainKey(controller.LIMIT_USDC_TO_DOMAIN(), CCTPForwarder.DOMAIN_ID_CIRCLE_SOLANA);
-        solanaLayerZeroKey =
-            keccak256(abi.encode(controller.LIMIT_LAYERZERO_TRANSFER(), USDS_OFT, SOLANA_LAYERZERO_DESTINATION));
+        solanaLayerZeroKey = keccak256(
+            abi.encode(
+                controller.LIMIT_LAYERZERO_TRANSFER(), Ethereum.USDS_SKY_OFT_ADAPTER, SOLANA_LAYERZERO_DESTINATION
+            )
+        );
     }
 
     function test_rateLimitsAreUpdated() public {
@@ -152,12 +152,12 @@ contract KeelEthereum_20251127Test is KeelTestBase {
 
         assertEq(
             controller.mintRecipients(CCTPForwarder.DOMAIN_ID_CIRCLE_SOLANA),
-            SOLANA_RECIPIENT,
+            Ethereum.KEEL_SVM_ALM_CONTROLLER_AUTHORITY,
             "incorrect-cctp-recipient"
         );
         assertEq(
             controller.layerZeroRecipients(SOLANA_LAYERZERO_DESTINATION),
-            SOLANA_RECIPIENT,
+            Ethereum.KEEL_SVM_ALM_CONTROLLER_AUTHORITY,
             "incorrect-layerzero-recipient"
         );
     }
@@ -182,12 +182,16 @@ contract KeelEthereum_20251127Test is KeelTestBase {
 
         assertEq(rateLimits.getCurrentRateLimit(generalCctpKey), TRANSFER_LIMIT_E6);
         assertEq(rateLimits.getCurrentRateLimit(solanaCctpKey), TRANSFER_LIMIT_E6);
-        assertEq(controller.mintRecipients(CCTPForwarder.DOMAIN_ID_CIRCLE_SOLANA), SOLANA_RECIPIENT);
+        assertEq(
+            controller.mintRecipients(CCTPForwarder.DOMAIN_ID_CIRCLE_SOLANA), Ethereum.KEEL_SVM_ALM_CONTROLLER_AUTHORITY
+        );
 
         uint256 cctpBalanceBefore = IERC20(address(controller.usdc())).balanceOf(cctp);
 
         vm.expectEmit(address(controller));
-        emit CCTPLib.CCTPTransferInitiated(1, CCTPForwarder.DOMAIN_ID_CIRCLE_SOLANA, SOLANA_RECIPIENT, transferAmount);
+        emit CCTPLib.CCTPTransferInitiated(
+            1, CCTPForwarder.DOMAIN_ID_CIRCLE_SOLANA, Ethereum.KEEL_SVM_ALM_CONTROLLER_AUTHORITY, transferAmount
+        );
 
         vm.prank(Ethereum.ALM_RELAYER);
         controller.transferUSDCToCCTP(transferAmount, CCTPForwarder.DOMAIN_ID_CIRCLE_SOLANA);
@@ -207,31 +211,35 @@ contract KeelEthereum_20251127Test is KeelTestBase {
 
         vm.startPrank(Ethereum.ALM_RELAYER);
         vm.expectRevert("RateLimits/zero-maxAmount");
-        controller.transferTokenLayerZero(USDS_OFT, transferAmount, SOLANA_LAYERZERO_DESTINATION);
+        controller.transferTokenLayerZero(Ethereum.USDS_SKY_OFT_ADAPTER, transferAmount, SOLANA_LAYERZERO_DESTINATION);
         vm.stopPrank();
 
         MockOFT mockOft = new MockOFT(IERC20(Ethereum.USDS));
-        vm.etch(USDS_OFT, address(mockOft).code);
+        vm.etch(Ethereum.USDS_SKY_OFT_ADAPTER, address(mockOft).code);
 
         executeAllPayloadsAndBridges();
 
-        uint256 oftBalanceBefore = IERC20(Ethereum.USDS).balanceOf(USDS_OFT);
-        assertEq(controller.layerZeroRecipients(SOLANA_LAYERZERO_DESTINATION), SOLANA_RECIPIENT);
+        uint256 oftBalanceBefore = IERC20(Ethereum.USDS).balanceOf(Ethereum.USDS_SKY_OFT_ADAPTER);
+        assertEq(
+            controller.layerZeroRecipients(SOLANA_LAYERZERO_DESTINATION), Ethereum.KEEL_SVM_ALM_CONTROLLER_AUTHORITY
+        );
         assertEq(rateLimits.getCurrentRateLimit(solanaLayerZeroKey), TRANSFER_LIMIT_E18);
 
         deal(Ethereum.USDS, Ethereum.ALM_PROXY, transferAmount);
         _assertMainnetAlmProxyBalances(transferAmount, 0);
 
         vm.prank(Ethereum.ALM_PROXY);
-        IERC20(Ethereum.USDS).approve(USDS_OFT, transferAmount);
+        IERC20(Ethereum.USDS).approve(Ethereum.USDS_SKY_OFT_ADAPTER, transferAmount);
 
         vm.prank(Ethereum.ALM_RELAYER);
-        controller.transferTokenLayerZero(USDS_OFT, transferAmount, SOLANA_LAYERZERO_DESTINATION);
+        controller.transferTokenLayerZero(Ethereum.USDS_SKY_OFT_ADAPTER, transferAmount, SOLANA_LAYERZERO_DESTINATION);
 
         assertEq(rateLimits.getCurrentRateLimit(solanaLayerZeroKey), TRANSFER_LIMIT_E18 - transferAmount);
         _assertMainnetAlmProxyBalances(0, 0);
         assertEq(
-            IERC20(Ethereum.USDS).balanceOf(USDS_OFT), oftBalanceBefore + transferAmount, "incorrect-usds-oft-balance"
+            IERC20(Ethereum.USDS).balanceOf(Ethereum.USDS_SKY_OFT_ADAPTER),
+            oftBalanceBefore + transferAmount,
+            "incorrect-usds-oft-balance"
         );
     }
 }
