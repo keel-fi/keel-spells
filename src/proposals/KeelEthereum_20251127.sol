@@ -18,12 +18,15 @@ import {MainnetController} from "lib/keel-alm-controller/src/MainnetController.s
  * Vote:  TODO
  */
 contract KeelEthereum_20251127 is KeelPayloadEthereum {
+    // https://docs.layerzero.network/v2/deployments/deployed-contracts?stages=mainnet&chains=solana
     uint32 internal constant SOLANA_LAYERZERO_DESTINATION = 30168;
+    // This was calculated by decoding the Solana base58 address `EeWDutgcKNTdQGJkGRrWYmTXXuKnPUZNvXepbLkQrxW4` into hex
     bytes32 internal constant SOLANA_RECIPIENT = 0xcac3764c231540dd2364f24c78fe8f491c08c42ef2ed370f22904eda9ac48609;
+    address internal constant USDS_OFT = 0x1e1D42781FC170EF9da004Fb735f56F0276d01B8;
 
     function _execute() internal override {
         _changeRateLimits();
-        _setRecipeints();
+        _setRecipients();
     }
 
     function _changeRateLimits() internal {
@@ -61,7 +64,7 @@ contract KeelEthereum_20251127 is KeelPayloadEthereum {
         bytes32 solanaLayerZeroKey = keccak256(
             abi.encode(
                 MainnetController(Ethereum.ALM_CONTROLLER).LIMIT_LAYERZERO_TRANSFER(),
-                Ethereum.USDS,
+                USDS_OFT,
                 SOLANA_LAYERZERO_DESTINATION
             )
         );
@@ -70,7 +73,7 @@ contract KeelEthereum_20251127 is KeelPayloadEthereum {
         );
     }
 
-    function _setRecipeints() internal {
+    function _setRecipients() internal {
         // Update CCTP Mint recipient
         // before: 0
         // After: SOLANA_RECIPIENT

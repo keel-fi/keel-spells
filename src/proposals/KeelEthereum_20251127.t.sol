@@ -27,34 +27,42 @@ import {KeelLiquidityLayerHelpers} from "src/libraries/KeelLiquidityLayerHelpers
 contract KeelEthereum_20251127Test is KeelTestBase {
     using OptionsBuilder for bytes;
 
+    // https://docs.layerzero.network/v2/deployments/deployed-contracts?stages=mainnet&chains=solana
     uint32 internal constant SOLANA_LAYERZERO_DESTINATION = 30168;
+    // This was calculated by decoding the Solana base58 address `EeWDutgcKNTdQGJkGRrWYmTXXuKnPUZNvXepbLkQrxW4` into hex
     bytes32 internal constant SOLANA_RECIPIENT = 0xcac3764c231540dd2364f24c78fe8f491c08c42ef2ed370f22904eda9ac48609;
+    address internal constant USDS_OFT = 0x1e1D42781FC170EF9da004Fb735f56F0276d01B8;
 
-    uint256 internal constant USDS_TO_USDC_LIMIT = 100_000_000e6;
-    uint256 internal constant USDS_TO_USDC_SLOPE = 50_000_000e6 / uint256(1 days);
+    uint256 internal constant TRANSFER_LIMIT_E6 = 100_000_000e6;
+    uint256 internal constant TRANSFER_SLOPE_E6 = 50_000_000e6 / uint256(1 days);
 
-    uint256 internal constant SUSDS_DEPOSIT_LIMIT = 100_000_000e18;
-    uint256 internal constant SUSDS_DEPOSIT_SLOPE = 50_000_000e18 / uint256(1 days);
+    uint256 internal constant TRANSFER_LIMIT_E18 = 100_000_000e18;
+    uint256 internal constant TRANSFER_SLOPE_E18 = 50_000_000e18 / uint256(1 days);
 
     MainnetController internal controller = MainnetController(Ethereum.ALM_CONTROLLER);
     IRateLimits internal rateLimits = IRateLimits(Ethereum.ALM_RATE_LIMITS);
+
+    bytes32 internal generalCctpKey;
+    bytes32 internal solanaCctpKey;
+    bytes32 internal solanaLayerZeroKey;
 
     constructor() {
         id = "20251127";
     }
 
     function setUp() public {
-        setupDomain({mainnetForkBlock: 23777504});
+        setupDomain({mainnetForkBlock: 23784468});
         deployPayload(ChainIdUtils.Ethereum());
+
+        generalCctpKey = controller.LIMIT_USDC_TO_CCTP();
+        solanaCctpKey =
+            RateLimitHelpers.makeDomainKey(controller.LIMIT_USDC_TO_DOMAIN(), CCTPForwarder.DOMAIN_ID_CIRCLE_SOLANA);
+        solanaLayerZeroKey =
+            keccak256(abi.encode(controller.LIMIT_LAYERZERO_TRANSFER(), USDS_OFT, SOLANA_LAYERZERO_DESTINATION));
     }
 
     function test_rateLimitsAreUpdated() public {
         bytes32 usdsToUsdcKey = controller.LIMIT_USDS_TO_USDC();
-        bytes32 generalCctpKey = controller.LIMIT_USDC_TO_CCTP();
-        bytes32 solanaCctpKey =
-            RateLimitHelpers.makeDomainKey(controller.LIMIT_USDC_TO_DOMAIN(), CCTPForwarder.DOMAIN_ID_CIRCLE_SOLANA);
-        bytes32 solanaLayerZeroKey =
-            keccak256(abi.encode(controller.LIMIT_LAYERZERO_TRANSFER(), Ethereum.USDS, SOLANA_LAYERZERO_DESTINATION));
         bytes32 susdsDepositKey =
             RateLimitHelpers.makeAssetKey(KeelLiquidityLayerHelpers.LIMIT_4626_DEPOSIT, Ethereum.SUSDS);
         bytes32 susdsWithdrawKey =
@@ -70,11 +78,11 @@ contract KeelEthereum_20251127Test is KeelTestBase {
 
         executeAllPayloadsAndBridges();
 
-        _assertRateLimit(usdsToUsdcKey, USDS_TO_USDC_LIMIT, USDS_TO_USDC_SLOPE);
-        _assertRateLimit(generalCctpKey, USDS_TO_USDC_LIMIT, USDS_TO_USDC_SLOPE);
-        _assertRateLimit(solanaCctpKey, USDS_TO_USDC_LIMIT, USDS_TO_USDC_SLOPE);
-        _assertRateLimit(solanaLayerZeroKey, SUSDS_DEPOSIT_LIMIT, SUSDS_DEPOSIT_SLOPE);
-        _assertRateLimit(susdsDepositKey, SUSDS_DEPOSIT_LIMIT, SUSDS_DEPOSIT_SLOPE);
+        _assertRateLimit(usdsToUsdcKey, TRANSFER_LIMIT_E6, TRANSFER_SLOPE_E6);
+        _assertRateLimit(generalCctpKey, TRANSFER_LIMIT_E6, TRANSFER_SLOPE_E6);
+        _assertRateLimit(solanaCctpKey, TRANSFER_LIMIT_E6, TRANSFER_SLOPE_E6);
+        _assertRateLimit(solanaLayerZeroKey, TRANSFER_LIMIT_E18, TRANSFER_SLOPE_E18);
+        _assertRateLimit(susdsDepositKey, TRANSFER_LIMIT_E18, TRANSFER_SLOPE_E18);
         _assertRateLimit(susdsWithdrawKey, type(uint256).max, 0);
     }
 
@@ -129,12 +137,8 @@ contract KeelEthereum_20251127Test is KeelTestBase {
 
         deal(address(controller.usdc()), Ethereum.ALM_PROXY, transferAmount);
 
-        bytes32 generalKey = controller.LIMIT_USDC_TO_CCTP();
-        bytes32 domainKey =
-            RateLimitHelpers.makeDomainKey(controller.LIMIT_USDC_TO_DOMAIN(), CCTPForwarder.DOMAIN_ID_CIRCLE_SOLANA);
-
-        assertEq(rateLimits.getCurrentRateLimit(generalKey), USDS_TO_USDC_LIMIT);
-        assertEq(rateLimits.getCurrentRateLimit(domainKey), USDS_TO_USDC_LIMIT);
+        assertEq(rateLimits.getCurrentRateLimit(generalCctpKey), TRANSFER_LIMIT_E6);
+        assertEq(rateLimits.getCurrentRateLimit(solanaCctpKey), TRANSFER_LIMIT_E6);
         assertEq(controller.mintRecipients(CCTPForwarder.DOMAIN_ID_CIRCLE_SOLANA), SOLANA_RECIPIENT);
 
         vm.expectEmit(address(controller));
@@ -143,8 +147,8 @@ contract KeelEthereum_20251127Test is KeelTestBase {
         vm.prank(Ethereum.ALM_RELAYER);
         controller.transferUSDCToCCTP(transferAmount, CCTPForwarder.DOMAIN_ID_CIRCLE_SOLANA);
 
-        assertEq(rateLimits.getCurrentRateLimit(generalKey), USDS_TO_USDC_LIMIT - transferAmount);
-        assertEq(rateLimits.getCurrentRateLimit(domainKey), USDS_TO_USDC_LIMIT - transferAmount);
+        assertEq(rateLimits.getCurrentRateLimit(generalCctpKey), TRANSFER_LIMIT_E6 - transferAmount);
+        assertEq(rateLimits.getCurrentRateLimit(solanaCctpKey), TRANSFER_LIMIT_E6 - transferAmount);
     }
 
     function test_layerZeroBridgeToSolana() public {
@@ -193,17 +197,14 @@ contract KeelEthereum_20251127Test is KeelTestBase {
 
         executeAllPayloadsAndBridges();
 
-        bytes32 solanaKey =
-            keccak256(abi.encode(controller.LIMIT_LAYERZERO_TRANSFER(), Ethereum.USDS, SOLANA_LAYERZERO_DESTINATION));
-
         assertEq(controller.layerZeroRecipients(SOLANA_LAYERZERO_DESTINATION), SOLANA_RECIPIENT);
-        assertEq(rateLimits.getCurrentRateLimit(solanaKey), SUSDS_DEPOSIT_LIMIT);
+        assertEq(rateLimits.getCurrentRateLimit(solanaLayerZeroKey), TRANSFER_LIMIT_E18);
 
         deal(Ethereum.USDS, Ethereum.ALM_PROXY, transferAmount);
 
         vm.prank(Ethereum.ALM_RELAYER);
         controller.transferTokenLayerZero(Ethereum.USDS, transferAmount, SOLANA_LAYERZERO_DESTINATION);
 
-        assertEq(rateLimits.getCurrentRateLimit(solanaKey), SUSDS_DEPOSIT_LIMIT - transferAmount);
+        assertEq(rateLimits.getCurrentRateLimit(solanaLayerZeroKey), TRANSFER_LIMIT_E18 - transferAmount);
     }
 }
