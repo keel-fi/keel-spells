@@ -18,9 +18,7 @@ library KeelLiquidityLayerHelpers {
      * @dev This will set the deposit to the given numbers with
      *      the withdraw limit set to unlimited.
      */
-    function onboardERC4626Vault(address rateLimits, address vault, uint256 depositMax, uint256 depositSlope)
-        internal
-    {
+    function onboardERC4626Vault(address rateLimits, address vault, uint256 depositMax, uint256 depositSlope) internal {
         bytes32 depositKey = RateLimitHelpers.makeAssetKey(LIMIT_4626_DEPOSIT, vault);
         bytes32 withdrawKey = RateLimitHelpers.makeAssetKey(LIMIT_4626_WITHDRAW, vault);
 
