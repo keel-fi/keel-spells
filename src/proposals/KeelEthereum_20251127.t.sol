@@ -156,7 +156,7 @@ contract KeelEthereum_20251127Test is KeelTestBase {
 
         vm.startPrank(Ethereum.ALM_RELAYER);
         vm.expectRevert("RateLimits/zero-maxAmount");
-        controller.transferTokenLayerZero(Ethereum.USDS, transferAmount, SOLANA_LAYERZERO_DESTINATION);
+        controller.transferTokenLayerZero(USDS_OFT, transferAmount, SOLANA_LAYERZERO_DESTINATION);
         vm.stopPrank();
 
         bytes memory options = OptionsBuilder.newOptions().addExecutorLzReceiveOption(200_000, 0);
@@ -180,17 +180,17 @@ contract KeelEthereum_20251127Test is KeelTestBase {
         MessagingFee memory fee = MessagingFee({nativeFee: 0, lzTokenFee: 0});
         MessagingReceipt memory msgReceipt = MessagingReceipt({guid: bytes32(0), nonce: 1, fee: fee});
 
-        vm.mockCall(Ethereum.USDS, abi.encodeWithSelector(ILayerZero.approvalRequired.selector), abi.encode(false));
+        vm.mockCall(USDS_OFT, abi.encodeWithSelector(ILayerZero.approvalRequired.selector), abi.encode(false));
         vm.mockCall(
-            Ethereum.USDS,
+            USDS_OFT,
             abi.encodeWithSelector(ILayerZero.quoteOFT.selector, postQuoteParams),
             abi.encode(limit, feeDetails, receipt)
         );
         vm.mockCall(
-            Ethereum.USDS, abi.encodeWithSelector(ILayerZero.quoteSend.selector, postSendParams, false), abi.encode(fee)
+            USDS_OFT, abi.encodeWithSelector(ILayerZero.quoteSend.selector, postSendParams, false), abi.encode(fee)
         );
         vm.mockCall(
-            Ethereum.USDS,
+            USDS_OFT,
             abi.encodeWithSelector(ILayerZero.send.selector, postSendParams, fee, Ethereum.ALM_PROXY),
             abi.encode(msgReceipt, receipt)
         );
@@ -203,7 +203,7 @@ contract KeelEthereum_20251127Test is KeelTestBase {
         deal(Ethereum.USDS, Ethereum.ALM_PROXY, transferAmount);
 
         vm.prank(Ethereum.ALM_RELAYER);
-        controller.transferTokenLayerZero(Ethereum.USDS, transferAmount, SOLANA_LAYERZERO_DESTINATION);
+        controller.transferTokenLayerZero(USDS_OFT, transferAmount, SOLANA_LAYERZERO_DESTINATION);
 
         assertEq(rateLimits.getCurrentRateLimit(solanaLayerZeroKey), TRANSFER_LIMIT_E18 - transferAmount);
     }
