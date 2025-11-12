@@ -7,7 +7,6 @@ import {CCTPForwarder} from "lib/xchain-helpers/src/forwarders/CCTPForwarder.sol
 import {RateLimitHelpers} from "lib/keel-alm-controller/src/RateLimitHelpers.sol";
 import {MainnetController} from "lib/keel-alm-controller/src/MainnetController.sol";
 import {IRateLimits} from "lib/keel-alm-controller/src/interfaces/IRateLimits.sol";
-import {ICCTPLike, ICCTPTokenMinterLike} from "lib/keel-alm-controller/src/interfaces/CCTPInterfaces.sol";
 import {CCTPLib} from "lib/keel-alm-controller/src/libraries/CCTPLib.sol";
 import {
     ILayerZero,
@@ -18,15 +17,74 @@ import {
     OFTReceipt,
     SendParam
 } from "lib/keel-alm-controller/src/interfaces/ILayerZero.sol";
-import {OptionsBuilder} from "layerzerolabs/oapp-evm/contracts/oapp/libs/OptionsBuilder.sol";
 
 import {Ethereum} from "lib/keel-address-registry/src/Ethereum.sol";
 
 import {KeelLiquidityLayerHelpers} from "src/libraries/KeelLiquidityLayerHelpers.sol";
+import {IERC20} from "forge-std/interfaces/IERC20.sol";
+
+contract MockCCTPTokenMinter {
+    function burnLimitsPerMessage(address) external pure returns (uint256) {
+        return type(uint256).max;
+    }
+}
+
+contract MockCCTP {
+    IERC20 public immutable usdc;
+    address public immutable localMinterAddress;
+
+    constructor(IERC20 _usdc, address _localMinterAddress) {
+        usdc = _usdc;
+        localMinterAddress = _localMinterAddress;
+    }
+
+    function localMinter() external view returns (address) {
+        return localMinterAddress;
+    }
+
+    function depositForBurn(uint256 amount, uint32, bytes32, address token) external returns (uint64) {
+        require(token == address(usdc), "MockCCTP/token-mismatch");
+        require(usdc.transferFrom(msg.sender, address(this), amount), "MockCCTP/transfer-failed");
+        return 1;
+    }
+}
+
+contract MockOFT {
+    IERC20 public immutable token;
+
+    constructor(IERC20 _token) {
+        token = _token;
+    }
+
+    function approvalRequired() external pure returns (bool) {
+        return false;
+    }
+
+    function quoteOFT(SendParam calldata params)
+        external
+        pure
+        returns (OFTLimit memory limit, OFTFeeDetail[] memory feeDetails, OFTReceipt memory receipt)
+    {
+        limit = OFTLimit({minAmountLD: 0, maxAmountLD: 0});
+        feeDetails = new OFTFeeDetail[](0);
+        receipt = OFTReceipt({amountSentLD: params.amountLD, amountReceivedLD: params.amountLD});
+    }
+
+    function quoteSend(SendParam calldata, bool) external pure returns (MessagingFee memory fee) {
+        fee = MessagingFee({nativeFee: 0, lzTokenFee: 0});
+    }
+
+    function send(SendParam calldata params, MessagingFee calldata, address)
+        external
+        returns (MessagingReceipt memory receipt, OFTReceipt memory oftReceipt)
+    {
+        require(token.transferFrom(msg.sender, address(this), params.amountLD), "MockOFT/transfer-failed");
+        receipt = MessagingReceipt({guid: bytes32(0), nonce: 1, fee: MessagingFee({nativeFee: 0, lzTokenFee: 0})});
+        oftReceipt = OFTReceipt({amountSentLD: params.amountLD, amountReceivedLD: params.amountLD});
+    }
+}
 
 contract KeelEthereum_20251127Test is KeelTestBase {
-    using OptionsBuilder for bytes;
-
     // https://docs.layerzero.network/v2/deployments/deployed-contracts?stages=mainnet&chains=solana
     uint32 internal constant SOLANA_LAYERZERO_DESTINATION = 30168;
     // This was calculated by decoding the Solana base58 address `EeWDutgcKNTdQGJkGRrWYmTXXuKnPUZNvXepbLkQrxW4` into hex
@@ -115,31 +173,18 @@ contract KeelEthereum_20251127Test is KeelTestBase {
         executeAllPayloadsAndBridges();
 
         address cctp = address(controller.cctp());
-        address localMinter = address(0xBEEF);
-
-        vm.mockCall(cctp, abi.encodeWithSelector(ICCTPLike.localMinter.selector), abi.encode(localMinter));
-        vm.mockCall(
-            localMinter,
-            abi.encodeWithSelector(ICCTPTokenMinterLike.burnLimitsPerMessage.selector, address(controller.usdc())),
-            abi.encode(type(uint256).max)
-        );
-        vm.mockCall(
-            cctp,
-            abi.encodeWithSelector(
-                ICCTPLike.depositForBurn.selector,
-                transferAmount,
-                CCTPForwarder.DOMAIN_ID_CIRCLE_SOLANA,
-                SOLANA_RECIPIENT,
-                address(controller.usdc())
-            ),
-            abi.encode(uint64(1))
-        );
+        MockCCTPTokenMinter mockTokenMinter = new MockCCTPTokenMinter();
+        MockCCTP mockCctp = new MockCCTP(IERC20(address(controller.usdc())), address(mockTokenMinter));
+        vm.etch(cctp, address(mockCctp).code);
 
         deal(address(controller.usdc()), Ethereum.ALM_PROXY, transferAmount);
+        _assertMainnetAlmProxyBalances(0, transferAmount);
 
         assertEq(rateLimits.getCurrentRateLimit(generalCctpKey), TRANSFER_LIMIT_E6);
         assertEq(rateLimits.getCurrentRateLimit(solanaCctpKey), TRANSFER_LIMIT_E6);
         assertEq(controller.mintRecipients(CCTPForwarder.DOMAIN_ID_CIRCLE_SOLANA), SOLANA_RECIPIENT);
+
+        uint256 cctpBalanceBefore = IERC20(address(controller.usdc())).balanceOf(cctp);
 
         vm.expectEmit(address(controller));
         emit CCTPLib.CCTPTransferInitiated(1, CCTPForwarder.DOMAIN_ID_CIRCLE_SOLANA, SOLANA_RECIPIENT, transferAmount);
@@ -149,6 +194,12 @@ contract KeelEthereum_20251127Test is KeelTestBase {
 
         assertEq(rateLimits.getCurrentRateLimit(generalCctpKey), TRANSFER_LIMIT_E6 - transferAmount);
         assertEq(rateLimits.getCurrentRateLimit(solanaCctpKey), TRANSFER_LIMIT_E6 - transferAmount);
+        _assertMainnetAlmProxyBalances(0, 0);
+        assertEq(
+            IERC20(address(controller.usdc())).balanceOf(cctp),
+            cctpBalanceBefore + transferAmount,
+            "incorrect-cctp-usdc-balance"
+        );
     }
 
     function test_layerZeroBridgeToSolana() public {
@@ -159,52 +210,28 @@ contract KeelEthereum_20251127Test is KeelTestBase {
         controller.transferTokenLayerZero(USDS_OFT, transferAmount, SOLANA_LAYERZERO_DESTINATION);
         vm.stopPrank();
 
-        bytes memory options = OptionsBuilder.newOptions().addExecutorLzReceiveOption(200_000, 0);
-
-        SendParam memory postQuoteParams = SendParam({
-            dstEid: SOLANA_LAYERZERO_DESTINATION,
-            to: SOLANA_RECIPIENT,
-            amountLD: transferAmount,
-            minAmountLD: 0,
-            extraOptions: options,
-            composeMsg: "",
-            oftCmd: ""
-        });
-
-        SendParam memory postSendParams = postQuoteParams;
-        postSendParams.minAmountLD = transferAmount;
-
-        OFTLimit memory limit;
-        OFTFeeDetail[] memory feeDetails = new OFTFeeDetail[](0);
-        OFTReceipt memory receipt = OFTReceipt({amountSentLD: transferAmount, amountReceivedLD: transferAmount});
-        MessagingFee memory fee = MessagingFee({nativeFee: 0, lzTokenFee: 0});
-        MessagingReceipt memory msgReceipt = MessagingReceipt({guid: bytes32(0), nonce: 1, fee: fee});
-
-        vm.mockCall(USDS_OFT, abi.encodeWithSelector(ILayerZero.approvalRequired.selector), abi.encode(false));
-        vm.mockCall(
-            USDS_OFT,
-            abi.encodeWithSelector(ILayerZero.quoteOFT.selector, postQuoteParams),
-            abi.encode(limit, feeDetails, receipt)
-        );
-        vm.mockCall(
-            USDS_OFT, abi.encodeWithSelector(ILayerZero.quoteSend.selector, postSendParams, false), abi.encode(fee)
-        );
-        vm.mockCall(
-            USDS_OFT,
-            abi.encodeWithSelector(ILayerZero.send.selector, postSendParams, fee, Ethereum.ALM_PROXY),
-            abi.encode(msgReceipt, receipt)
-        );
+        MockOFT mockOft = new MockOFT(IERC20(Ethereum.USDS));
+        vm.etch(USDS_OFT, address(mockOft).code);
 
         executeAllPayloadsAndBridges();
 
+        uint256 oftBalanceBefore = IERC20(Ethereum.USDS).balanceOf(USDS_OFT);
         assertEq(controller.layerZeroRecipients(SOLANA_LAYERZERO_DESTINATION), SOLANA_RECIPIENT);
         assertEq(rateLimits.getCurrentRateLimit(solanaLayerZeroKey), TRANSFER_LIMIT_E18);
 
         deal(Ethereum.USDS, Ethereum.ALM_PROXY, transferAmount);
+        _assertMainnetAlmProxyBalances(transferAmount, 0);
+
+        vm.prank(Ethereum.ALM_PROXY);
+        IERC20(Ethereum.USDS).approve(USDS_OFT, transferAmount);
 
         vm.prank(Ethereum.ALM_RELAYER);
         controller.transferTokenLayerZero(USDS_OFT, transferAmount, SOLANA_LAYERZERO_DESTINATION);
 
         assertEq(rateLimits.getCurrentRateLimit(solanaLayerZeroKey), TRANSFER_LIMIT_E18 - transferAmount);
+        _assertMainnetAlmProxyBalances(0, 0);
+        assertEq(
+            IERC20(Ethereum.USDS).balanceOf(USDS_OFT), oftBalanceBefore + transferAmount, "incorrect-usds-oft-balance"
+        );
     }
 }
