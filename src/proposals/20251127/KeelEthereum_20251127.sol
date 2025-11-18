@@ -33,35 +33,35 @@ contract KeelEthereum_20251127 is KeelPayloadEthereum {
     }
 
     function _changeRateLimits() internal {
-        // Update USDS <> USDC RateLimit
-        // before: 10k
-        // After: 100M
+        // ---------- [Mainnet] Update USDS to USDC Rate Limits ----------
+        // BEFORE :      10,000 max ;       5,000/day slope
+        // AFTER  : 100,000,000 max ;  50,000,000/day slope
         _setUSDSToUSDCRateLimit(TRANSFER_LIMIT_E6, TRANSFER_SLOPE_E6);
 
-        // Update USDS to sUSDS RateLimit
-        // before: 10k
-        // After: 100M
+        // ---------- [Mainnet] Update USDS to sUSDS Rate Limits ----------
+        // BEFORE :      10,000 max ;       5,000/day slope
+        // AFTER  : 100,000,000 max ;  50,000,000/day slope
         _onboardERC4626Vault(Ethereum.SUSDS, TRANSFER_LIMIT_E18, TRANSFER_SLOPE_E18);
 
-        // Update USDC to CCTP General RateLimit
-        // before: 0
-        // After: 100M
+        // ---------- [Mainnet] Update USDC to CCTP General Rate Limits ----------
+        // BEFORE :           0 max ;           0 slope
+        // AFTER  : 100,000,000 max ;  50,000,000/day slope
         bytes32 generalCctpKey = MainnetController(Ethereum.ALM_CONTROLLER).LIMIT_USDC_TO_CCTP();
         IRateLimits(Ethereum.ALM_RATE_LIMITS)
             .setRateLimitData(generalCctpKey, TRANSFER_LIMIT_E6, TRANSFER_SLOPE_E6);
 
-        // Update USDC to CCTP Solana RateLimit
-        // before: 0
-        // After: 100M
+        // ---------- [Mainnet] Update USDC to CCTP Solana Rate Limits ----------
+        // BEFORE :           0 max ;           0 slope
+        // AFTER  : 100,000,000 max ;  50,000,000/day slope
         bytes32 solanaCctpKey = RateLimitHelpers.makeDomainKey(
             MainnetController(Ethereum.ALM_CONTROLLER).LIMIT_USDC_TO_DOMAIN(), CCTPForwarder.DOMAIN_ID_CIRCLE_SOLANA
         );
         IRateLimits(Ethereum.ALM_RATE_LIMITS)
             .setRateLimitData(solanaCctpKey, TRANSFER_LIMIT_E6, TRANSFER_SLOPE_E6);
 
-        // Update USDS to LayerZero Solana RateLimit
-        // before: 0
-        // After: 100M
+        // ---------- [Mainnet] Update USDS to LayerZero Solana Rate Limits ----------
+        // BEFORE :           0 max ;           0 slope
+        // AFTER  : 100,000,000 max ;  50,000,000/day slope
         bytes32 solanaLayerZeroKey = keccak256(
             abi.encode(
                 MainnetController(Ethereum.ALM_CONTROLLER).LIMIT_LAYERZERO_TRANSFER(),
@@ -74,15 +74,15 @@ contract KeelEthereum_20251127 is KeelPayloadEthereum {
     }
 
     function _setRecipients() internal {
-        // Update CCTP Mint recipient
-        // before: 0
-        // After: KEEL_SVM_ALM_CONTROLLER_AUTHORITY
+        // ---------- [Mainnet] Update CCTP Mint Recipient ----------
+        // BEFORE : 0
+        // AFTER  : KEEL_SVM_ALM_CONTROLLER_AUTHORITY
         MainnetController(Ethereum.ALM_CONTROLLER)
             .setMintRecipient(CCTPForwarder.DOMAIN_ID_CIRCLE_SOLANA, Ethereum.KEEL_SVM_ALM_CONTROLLER_AUTHORITY);
 
-        // Update LayerZero Mint recipient
-        // before: 0
-        // After: KEEL_SVM_ALM_CONTROLLER_AUTHORITY
+        // ---------- [Mainnet] Update LayerZero Mint Recipient ----------
+        // BEFORE : 0
+        // AFTER  : KEEL_SVM_ALM_CONTROLLER_AUTHORITY
         MainnetController(Ethereum.ALM_CONTROLLER)
             .setLayerZeroRecipient(SOLANA_LAYERZERO_DESTINATION, Ethereum.KEEL_SVM_ALM_CONTROLLER_AUTHORITY);
     }
