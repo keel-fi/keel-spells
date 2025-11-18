@@ -21,6 +21,12 @@ contract KeelEthereum_20251127 is KeelPayloadEthereum {
     // https://docs.layerzero.network/v2/deployments/deployed-contracts?stages=mainnet&chains=solana
     uint32 internal constant SOLANA_LAYERZERO_DESTINATION = 30168;
 
+    uint256 internal constant TRANSFER_LIMIT_E6 = 100_000_000e6;
+    uint256 internal constant TRANSFER_SLOPE_E6 = 50_000_000e6 / uint256(1 days);
+
+    uint256 internal constant TRANSFER_LIMIT_E18 = 100_000_000e18;
+    uint256 internal constant TRANSFER_SLOPE_E18 = 50_000_000e18 / uint256(1 days);
+
     function _execute() internal override {
         _changeRateLimits();
         _setRecipients();
@@ -30,19 +36,19 @@ contract KeelEthereum_20251127 is KeelPayloadEthereum {
         // Update USDS <> USDC RateLimit
         // before: 10k
         // After: 100M
-        _setUSDSToUSDCRateLimit(100_000_000e6, 50_000_000e6 / uint256(1 days));
+        _setUSDSToUSDCRateLimit(TRANSFER_LIMIT_E6, TRANSFER_SLOPE_E6);
 
         // Update USDS to sUSDS RateLimit
         // before: 10k
         // After: 100M
-        _onboardERC4626Vault(Ethereum.SUSDS, 100_000_000e18, 50_000_000e18 / uint256(1 days));
+        _onboardERC4626Vault(Ethereum.SUSDS, TRANSFER_LIMIT_E18, TRANSFER_SLOPE_E18);
 
         // Update USDC to CCTP General RateLimit
         // before: 0
         // After: 100M
         bytes32 generalCctpKey = MainnetController(Ethereum.ALM_CONTROLLER).LIMIT_USDC_TO_CCTP();
         IRateLimits(Ethereum.ALM_RATE_LIMITS)
-            .setRateLimitData(generalCctpKey, 100_000_000e6, 50_000_000e6 / uint256(1 days));
+            .setRateLimitData(generalCctpKey, TRANSFER_LIMIT_E6, TRANSFER_SLOPE_E6);
 
         // Update USDC to CCTP Solana RateLimit
         // before: 0
@@ -51,7 +57,7 @@ contract KeelEthereum_20251127 is KeelPayloadEthereum {
             MainnetController(Ethereum.ALM_CONTROLLER).LIMIT_USDC_TO_DOMAIN(), CCTPForwarder.DOMAIN_ID_CIRCLE_SOLANA
         );
         IRateLimits(Ethereum.ALM_RATE_LIMITS)
-            .setRateLimitData(solanaCctpKey, 100_000_000e6, 50_000_000e6 / uint256(1 days));
+            .setRateLimitData(solanaCctpKey, TRANSFER_LIMIT_E6, TRANSFER_SLOPE_E6);
 
         // Update USDS to LayerZero Solana RateLimit
         // before: 0
@@ -64,7 +70,7 @@ contract KeelEthereum_20251127 is KeelPayloadEthereum {
             )
         );
         IRateLimits(Ethereum.ALM_RATE_LIMITS)
-            .setRateLimitData(solanaLayerZeroKey, 100_000_000e18, 50_000_000e18 / uint256(1 days));
+            .setRateLimitData(solanaLayerZeroKey, TRANSFER_LIMIT_E18, TRANSFER_SLOPE_E18);
     }
 
     function _setRecipients() internal {
