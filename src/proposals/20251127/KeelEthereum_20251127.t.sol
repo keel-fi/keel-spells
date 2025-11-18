@@ -21,7 +21,12 @@ import {
 import {Ethereum} from "lib/keel-address-registry/src/Ethereum.sol";
 
 import {KeelLiquidityLayerHelpers} from "src/libraries/KeelLiquidityLayerHelpers.sol";
-import {IERC20} from "forge-std/interfaces/IERC20.sol";
+
+interface IERC20Like {
+    function balanceOf(address account) external view returns (uint256);
+    function approve(address spender, uint256 amount) external returns (bool);
+    function transferFrom(address from, address to, uint256 amount) external returns (bool);
+}
 
 contract MockCCTPTokenMinter {
     function burnLimitsPerMessage(address) external pure returns (uint256) {
@@ -30,10 +35,10 @@ contract MockCCTPTokenMinter {
 }
 
 contract MockCCTP {
-    IERC20 public immutable usdc;
+    IERC20Like public immutable usdc;
     address public immutable localMinterAddress;
 
-    constructor(IERC20 _usdc, address _localMinterAddress) {
+    constructor(IERC20Like _usdc, address _localMinterAddress) {
         usdc = _usdc;
         localMinterAddress = _localMinterAddress;
     }
@@ -50,9 +55,9 @@ contract MockCCTP {
 }
 
 contract MockOFT {
-    IERC20 public immutable token;
+    IERC20Like public immutable token;
 
-    constructor(IERC20 _token) {
+    constructor(IERC20Like _token) {
         token = _token;
     }
 
@@ -174,7 +179,7 @@ contract KeelEthereum_20251127Test is KeelTestBase {
 
         address cctp = address(controller.cctp());
         MockCCTPTokenMinter mockTokenMinter = new MockCCTPTokenMinter();
-        MockCCTP mockCctp = new MockCCTP(IERC20(address(controller.usdc())), address(mockTokenMinter));
+        MockCCTP mockCctp = new MockCCTP(IERC20Like(address(controller.usdc())), address(mockTokenMinter));
         vm.etch(cctp, address(mockCctp).code);
 
         deal(address(controller.usdc()), Ethereum.ALM_PROXY, transferAmount);
@@ -186,7 +191,7 @@ contract KeelEthereum_20251127Test is KeelTestBase {
             controller.mintRecipients(CCTPForwarder.DOMAIN_ID_CIRCLE_SOLANA), Ethereum.KEEL_SVM_ALM_CONTROLLER_AUTHORITY
         );
 
-        uint256 cctpBalanceBefore = IERC20(address(controller.usdc())).balanceOf(cctp);
+        uint256 cctpBalanceBefore = IERC20Like(address(controller.usdc())).balanceOf(cctp);
 
         vm.expectEmit(address(controller));
         emit CCTPLib.CCTPTransferInitiated(
@@ -200,7 +205,7 @@ contract KeelEthereum_20251127Test is KeelTestBase {
         assertEq(rateLimits.getCurrentRateLimit(solanaCctpKey), TRANSFER_LIMIT_E6 - transferAmount);
         _assertMainnetAlmProxyBalances(0, 0);
         assertEq(
-            IERC20(address(controller.usdc())).balanceOf(cctp),
+            IERC20Like(address(controller.usdc())).balanceOf(cctp),
             cctpBalanceBefore + transferAmount,
             "incorrect-cctp-usdc-balance"
         );
@@ -214,12 +219,12 @@ contract KeelEthereum_20251127Test is KeelTestBase {
         controller.transferTokenLayerZero(Ethereum.USDS_SKY_OFT_ADAPTER, transferAmount, SOLANA_LAYERZERO_DESTINATION);
         vm.stopPrank();
 
-        MockOFT mockOft = new MockOFT(IERC20(Ethereum.USDS));
+        MockOFT mockOft = new MockOFT(IERC20Like(Ethereum.USDS));
         vm.etch(Ethereum.USDS_SKY_OFT_ADAPTER, address(mockOft).code);
 
         executeAllPayloadsAndBridges();
 
-        uint256 oftBalanceBefore = IERC20(Ethereum.USDS).balanceOf(Ethereum.USDS_SKY_OFT_ADAPTER);
+        uint256 oftBalanceBefore = IERC20Like(Ethereum.USDS).balanceOf(Ethereum.USDS_SKY_OFT_ADAPTER);
         assertEq(
             controller.layerZeroRecipients(SOLANA_LAYERZERO_DESTINATION), Ethereum.KEEL_SVM_ALM_CONTROLLER_AUTHORITY
         );
@@ -229,7 +234,7 @@ contract KeelEthereum_20251127Test is KeelTestBase {
         _assertMainnetAlmProxyBalances(transferAmount, 0);
 
         vm.prank(Ethereum.ALM_PROXY);
-        IERC20(Ethereum.USDS).approve(Ethereum.USDS_SKY_OFT_ADAPTER, transferAmount);
+        IERC20Like(Ethereum.USDS).approve(Ethereum.USDS_SKY_OFT_ADAPTER, transferAmount);
 
         vm.prank(Ethereum.ALM_RELAYER);
         controller.transferTokenLayerZero(Ethereum.USDS_SKY_OFT_ADAPTER, transferAmount, SOLANA_LAYERZERO_DESTINATION);
@@ -237,7 +242,7 @@ contract KeelEthereum_20251127Test is KeelTestBase {
         assertEq(rateLimits.getCurrentRateLimit(solanaLayerZeroKey), TRANSFER_LIMIT_E18 - transferAmount);
         _assertMainnetAlmProxyBalances(0, 0);
         assertEq(
-            IERC20(Ethereum.USDS).balanceOf(Ethereum.USDS_SKY_OFT_ADAPTER),
+            IERC20Like(Ethereum.USDS).balanceOf(Ethereum.USDS_SKY_OFT_ADAPTER),
             oftBalanceBefore + transferAmount,
             "incorrect-usds-oft-balance"
         );

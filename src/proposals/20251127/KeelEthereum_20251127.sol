@@ -76,8 +76,7 @@ contract KeelEthereum_20251127 is KeelPayloadEthereum {
         // BEFORE :           0 max ;           0 slope
         // AFTER  : 100,000,000 max ;  50,000,000/day slope
         bytes32 generalCctpKey = MainnetController(Ethereum.ALM_CONTROLLER).LIMIT_USDC_TO_CCTP();
-        IRateLimits(Ethereum.ALM_RATE_LIMITS)
-            .setRateLimitData(generalCctpKey, TRANSFER_LIMIT_E6, TRANSFER_SLOPE_E6);
+        IRateLimits(Ethereum.ALM_RATE_LIMITS).setRateLimitData(generalCctpKey, TRANSFER_LIMIT_E6, TRANSFER_SLOPE_E6);
     }
 
     function _changeUSDCtoCCTPSolanaRateLimits() internal {
@@ -87,8 +86,7 @@ contract KeelEthereum_20251127 is KeelPayloadEthereum {
         bytes32 solanaCctpKey = RateLimitHelpers.makeDomainKey(
             MainnetController(Ethereum.ALM_CONTROLLER).LIMIT_USDC_TO_DOMAIN(), CCTPForwarder.DOMAIN_ID_CIRCLE_SOLANA
         );
-        IRateLimits(Ethereum.ALM_RATE_LIMITS)
-            .setRateLimitData(solanaCctpKey, TRANSFER_LIMIT_E6, TRANSFER_SLOPE_E6);
+        IRateLimits(Ethereum.ALM_RATE_LIMITS).setRateLimitData(solanaCctpKey, TRANSFER_LIMIT_E6, TRANSFER_SLOPE_E6);
     }
 
     function _changeUSDStoLayerZeroSolanaRateLimits() internal {
