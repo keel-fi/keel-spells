@@ -126,11 +126,7 @@ interface ISpokeLike {
 }
 
 abstract contract KeelLiquidityLayerTests is SpellRunner {
-    function _getKeelLiquidityLayerContext(ChainId chain)
-        internal
-        pure
-        returns (KeelLiquidityLayerContext memory ctx)
-    {
+    function _getKeelLiquidityLayerContext(ChainId chain) internal pure returns (KeelLiquidityLayerContext memory ctx) {
         if (chain == ChainIdUtils.Ethereum()) {
             ctx = KeelLiquidityLayerContext(
                 Ethereum.ALM_CONTROLLER,
