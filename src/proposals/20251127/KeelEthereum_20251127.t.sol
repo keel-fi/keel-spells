@@ -84,6 +84,8 @@ contract MockOFT {
 }
 
 contract KeelEthereum_20251127Test is KeelTestBase {
+    address internal constant KEEL_ETHEREUM_20251127 = 0x2395AF361CdF86d348B07E109E710943AFDb23aa;
+
     // https://docs.layerzero.network/v2/deployments/deployed-contracts?stages=mainnet&chains=solana
     uint32 internal constant SOLANA_LAYERZERO_DESTINATION = 30168;
 
@@ -105,8 +107,9 @@ contract KeelEthereum_20251127Test is KeelTestBase {
     }
 
     function setUp() public {
-        setupDomain({mainnetForkBlock: 23784468});
-        deployPayload(ChainIdUtils.Ethereum());
+        setupDomain({mainnetForkBlock: 23864874});
+
+        chainData[ChainIdUtils.Ethereum()].payload = KEEL_ETHEREUM_20251127;
 
         generalCctpKey = controller.LIMIT_USDC_TO_CCTP();
         solanaCctpKey =
