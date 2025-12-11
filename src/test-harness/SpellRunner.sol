@@ -17,6 +17,8 @@ import {RecordedLogs} from "xchain-helpers/testing/utils/RecordedLogs.sol";
 import {ChainIdUtils, ChainId} from "../libraries/ChainId.sol";
 import {KeelPayloadEthereum} from "../libraries/KeelPayloadEthereum.sol";
 
+import {IStarGuardLike} from "../interfaces/Interfaces.sol";
+
 abstract contract SpellRunner is Test {
     using DomainHelpers for Domain;
     using DomainHelpers for StdChains.Chain;
@@ -179,11 +181,15 @@ abstract contract SpellRunner is Test {
 
         require(_isContract(payloadAddress), "PAYLOAD IS NOT A CONTRACT");
 
+        bytes32 bytecodeHash = payloadAddress.codehash;
+
         vm.prank(Ethereum.PAUSE_PROXY);
-        (bool success,) = executor.call(
-            abi.encodeWithSignature("exec(address,bytes)", payloadAddress, abi.encodeWithSignature("execute()"))
-        );
-        require(success, "FAILED TO EXECUTE PAYLOAD");
+        IStarGuardLike starGuard = IStarGuardLike(Ethereum.KEEL_STAR_GUARD);
+        starGuard.plot(payloadAddress, bytecodeHash);
+        address payload = starGuard.exec();
+        require(payload == payloadAddress, "FAILED TO EXECUTE PAYLOAD");
+
+        chainData[ChainIdUtils.Ethereum()].spellExecuted = true;
     }
 
     function _isContract(address account) internal view returns (bool) {
