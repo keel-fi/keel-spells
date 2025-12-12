@@ -30,6 +30,10 @@ contract KeelEthereum_20260115 is KeelPayloadEthereum {
         // [Ethereum] Keel - Execute cross-chain payload
         // Forum: TODO
         _executeAddNewRelayerCrossChainPayload();
+
+        // [Ethereum] Keel - Execute cross-chain payload
+        // Forum: TODO
+        _executeUpgradeALMControllerCrossChainPayload();
     }
 
     function _setCCTPMintRecipient() internal {
