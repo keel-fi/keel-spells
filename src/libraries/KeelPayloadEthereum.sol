@@ -14,6 +14,15 @@ abstract contract KeelPayloadEthereum {
         _execute();
     }
 
+    /**
+     * @notice Checks if the Keel Ethereum payload is executable in the current block
+     * @dev Required, useful for implementing "earliest launch date" or "office hours" strategy
+     * @return result The result of the check (true = executable, false = not)
+     */
+    function isExecutable() external pure returns (bool result) {
+        result = true;
+    }
+
     function _execute() internal virtual;
 
     function _onboardERC4626Vault(address vault, uint256 depositMax, uint256 depositSlope) internal {
