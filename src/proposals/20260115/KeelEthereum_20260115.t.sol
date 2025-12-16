@@ -62,6 +62,11 @@ contract KeelEthereum_20260115Test is KeelTestBase {
         bytes32 recipient = controller.mintRecipients(
             CCTPForwarder.DOMAIN_ID_CIRCLE_SOLANA
         );
-        assertEq(recipient, "TODO" , "cctp-mint-recipient-not-updated");
+        // TODO: move to the keel address registry
+        assertEq(
+            recipient,
+            0x3387f134e4a16b92ee3cb364cbca054a8ec384932b537620588263ec760e6b40,
+            "cctp-mint-recipient-not-updated"
+        );
     }
 }
