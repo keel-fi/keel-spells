@@ -50,10 +50,9 @@ contract KeelEthereum_20260115Test is KeelTestBase {
     }
 
     function test_cctpMintRecipientWasUpdated() public {
-        // Check that the CCTP mint recipient is initially zero
         assertEq(
             controller.mintRecipients(CCTPForwarder.DOMAIN_ID_CIRCLE_SOLANA),
-            bytes32(0xcac3764c231540dd2364f24c78fe8f491c08c42ef2ed370f22904eda9ac48609)
+            bytes32(Ethereum.KEEL_SVM_ALM_CONTROLLER_AUTHORITY)
         );
 
         // Execute the payload
