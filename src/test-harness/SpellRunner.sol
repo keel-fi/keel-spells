@@ -183,9 +183,7 @@ abstract contract SpellRunner is Test {
         bytes32 bytecodeHash = payloadAddress.codehash;
 
         vm.prank(Ethereum.PAUSE_PROXY);
-        // IStarGuardLike starGuard = IStarGuardLike(Ethereum.KEEL_STAR_GUARD);
-        // TODO: uncomment the line above when we have it in the keel address registry
-        IStarGuardLike starGuard = IStarGuardLike(0xe8fF70481d653Ec31AB9E0cB2A8B316afF8D84ee);
+        IStarGuardLike starGuard = IStarGuardLike(Ethereum.KEEL_STAR_GUARD);
         starGuard.plot(payloadAddress, bytecodeHash);
         address payload = starGuard.exec();
         require(payload == payloadAddress, "FAILED TO EXECUTE PAYLOAD");
