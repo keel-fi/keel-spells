@@ -9,7 +9,7 @@ import {MainnetController} from "lib/keel-alm-controller/src/MainnetController.s
 
 /**
  * @title  January 15, 2026 Keel Ethereum Proposal
- * @notice Update CCTP Recipient and execute cross-chain payload
+ * @notice Update CCTP Recipient
  * @author Exo Tech
  * Forum: TODO
  * Vote:  TODO
