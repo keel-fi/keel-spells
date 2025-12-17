@@ -25,8 +25,8 @@ contract KeelEthereum_20260115 is KeelPayloadEthereum {
 
     function _setCCTPMintRecipient() internal {
         // ---------- [Ethereum] Update CCTP Mint Recipient ----------
-        // BEFORE : 0
-        // AFTER  : TODO
+        // BEFORE : Ethereum.KEEL_SVM_ALM_CONTROLLER_AUTHORITY
+        // AFTER  : Ethereum.KEEL_SVM_ALM_CONTROLLER_AUTHORITY_USDC_ATA
         MainnetController(Ethereum.ALM_CONTROLLER)
             .setMintRecipient(
                 CCTPForwarder.DOMAIN_ID_CIRCLE_SOLANA, Ethereum.KEEL_SVM_ALM_CONTROLLER_AUTHORITY_USDC_ATA
