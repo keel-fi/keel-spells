@@ -19,8 +19,6 @@ contract KeelEthereum_20260115Test is KeelTestBase {
     function setUp() public {
         setupDomain({mainnetForkBlock: 24026112});
         deployPayload(ChainIdUtils.Ethereum());
-        // Fund KEEL_PROXY (SubProxy) with ETH to pay for LayerZero messaging fees
-        vm.deal(Ethereum.KEEL_PROXY, 1 ether);
     }
 
     function test_cctpMintRecipientWasUpdated() public {
