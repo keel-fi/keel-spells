@@ -15,7 +15,6 @@ import {MainnetController} from "lib/keel-alm-controller/src/MainnetController.s
  * Vote:  TODO
  */
 contract KeelEthereum_20260115 is KeelPayloadEthereum {
-    uint32 internal constant ENDPOINT_ID_SOLANA = 30168;
 
     function _execute() internal override {
         // [Ethereum] Keel - Update CCTP Recipient
