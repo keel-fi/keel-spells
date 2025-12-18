@@ -10,7 +10,7 @@ import {MainnetController} from "lib/keel-alm-controller/src/MainnetController.s
 /**
  * @title  January 15, 2026 Keel Ethereum Proposal
  * @notice Update CCTP Recipient
- * @author Exo Tech
+ * @author Matariki Labs
  * Forum: TODO
  * Vote:  TODO
  */
