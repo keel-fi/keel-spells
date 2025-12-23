@@ -11,13 +11,13 @@ import {MainnetController} from "lib/keel-alm-controller/src/MainnetController.s
  * @title  January 15, 2026 Keel Ethereum Proposal
  * @notice Update CCTP Recipient
  * @author Matariki Labs
- * Forum: TODO
+ * Forum: https://forum.sky.money/t/january-15-2026-prime-technical-scope-parameter-change-for-upcoming-spell/27567
  * Vote:  TODO
  */
 contract KeelEthereum_20260115 is KeelPayloadEthereum {
     function _execute() internal override {
         // [Ethereum] Keel - Update CCTP Recipient
-        // Forum: TODO
+        // Forum: https://forum.sky.money/t/january-15-2026-prime-technical-scope-parameter-change-for-upcoming-spell/27567
         _setCCTPMintRecipient();
     }
 
