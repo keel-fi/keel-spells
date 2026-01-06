@@ -12,13 +12,15 @@ import {ChainIdUtils} from "src/libraries/ChainId.sol";
 contract KeelEthereum_20260115Test is KeelTestBase {
     MainnetController internal controller = MainnetController(Ethereum.ALM_CONTROLLER);
 
+    address internal constant KEEL_ETHEREUM_20260115 = 0x10AF705fB80bc115FCa83a6B976576Feb1E1aaca;
+
     constructor() {
         id = "20260115";
     }
 
     function setUp() public {
-        setupDomain({mainnetForkBlock: 24026112});
-        deployPayload(ChainIdUtils.Ethereum());
+        setupDomain({mainnetForkBlock: 24176770});
+        chainData[ChainIdUtils.Ethereum()].payload = KEEL_ETHEREUM_20260115;
     }
 
     function test_cctpMintRecipientWasUpdated() public {
