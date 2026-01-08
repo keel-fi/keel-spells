@@ -6,10 +6,9 @@ import "src/test-harness/KeelTestBase.sol";
 import {CCTPForwarder} from "lib/xchain-helpers/src/forwarders/CCTPForwarder.sol";
 import {MainnetController} from "lib/keel-alm-controller/src/MainnetController.sol";
 import {RateLimitHelpers} from "lib/keel-alm-controller/src/RateLimitHelpers.sol";
-import { IRateLimits } from "lib/keel-alm-controller/src/interfaces/IRateLimits.sol";
+import {IRateLimits} from "lib/keel-alm-controller/src/interfaces/IRateLimits.sol";
 import {Ethereum} from "lib/keel-address-registry/src/Ethereum.sol";
 import {ChainIdUtils} from "src/libraries/ChainId.sol";
-
 
 contract KeelEthereum_20260115Test is KeelTestBase {
     MainnetController internal controller = MainnetController(Ethereum.ALM_CONTROLLER);
@@ -64,5 +63,10 @@ contract KeelEthereum_20260115Test is KeelTestBase {
 
         assertEq(rateLimits.getCurrentRateLimit(controller.LIMIT_USDC_TO_CCTP()), usdcToCctpRateLimit - usdcAmount);
         assertEq(rateLimits.getCurrentRateLimit(solanaKey), solanaRateLimit - usdcAmount);
+
+        skip(1 days);
+
+        assertEq(rateLimits.getCurrentRateLimit(controller.LIMIT_USDC_TO_CCTP()), usdcToCctpRateLimit);
+        assertEq(rateLimits.getCurrentRateLimit(solanaKey), solanaRateLimit);
     }
 }
