@@ -1,0 +1,13 @@
+{
+  "name": "keel-spells",
+  "version": "1.0.0",
+  "description": "",
+  "private": true,
+  "scripts": {},
+  "dependencies": {
+    "@layerzerolabs/lz-evm-messagelib-v2": "^3.0.75",
+    "@layerzerolabs/lz-evm-protocol-v2": "^3.0.75",
+    "@layerzerolabs/oapp-evm": "^0.3.2"
+  }
+}
+
