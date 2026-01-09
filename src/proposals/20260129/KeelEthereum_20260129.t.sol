@@ -3,22 +3,14 @@ pragma solidity 0.8.25;
 
 import "src/test-harness/KeelTestBase.sol";
 
-import {
-    IGovernanceOAppSender,
-    TxParams,
-    MessagingFee,
-    MessagingReceipt
-} from "src/interfaces/Interfaces.sol";
+import {IGovernanceOAppSender, TxParams, MessagingFee, MessagingReceipt} from "src/interfaces/Interfaces.sol";
 import {Ethereum} from "lib/keel-address-registry/src/Ethereum.sol";
 import {ChainIdUtils} from "src/libraries/ChainId.sol";
-import {
-    OptionsBuilder
-} from "@layerzerolabs/oapp-evm/contracts/oapp/libs/OptionsBuilder.sol";
+import {OptionsBuilder} from "@layerzerolabs/oapp-evm/contracts/oapp/libs/OptionsBuilder.sol";
 
 contract KeelEthereum_20260129Test is KeelTestBase {
     using OptionsBuilder for bytes;
-    address internal constant LZ_GOV_SENDER =
-        0x27FC1DD771817b53bE48Dc28789533BEa53C9CCA;
+    address internal constant LZ_GOV_SENDER = 0x27FC1DD771817b53bE48Dc28789533BEa53C9CCA;
     uint32 internal constant ENDPOINT_ID_SOLANA = 30168;
 
     // Solana program addresses encoded as bytes32
@@ -26,8 +18,7 @@ contract KeelEthereum_20260129Test is KeelTestBase {
     bytes32 internal constant SOLANA_SVM_CONTROLLER_PROGRAM =
         0x8aadd66fe8f142fb55a08e900228f5488fcc7d73938bbce28e313e1b87da3624;
     // SOLANA_BPF_LOADER_V3 = BPFLoaderUpgradeab1e11111111111111111111111
-    bytes32 internal constant SOLANA_BPF_LOADER_V3 =
-        0x02a8f6914e88a1b0e210153ef763ae2b00c2b93d16c124d2c0537a1004800000;
+    bytes32 internal constant SOLANA_BPF_LOADER_V3 = 0x02a8f6914e88a1b0e210153ef763ae2b00c2b93d16c124d2c0537a1004800000;
 
     IGovernanceOAppSender internal govSender;
 
@@ -37,28 +28,16 @@ contract KeelEthereum_20260129Test is KeelTestBase {
 
     function setUp() public {
         setupDomain({mainnetForkBlock: 24192205});
-        chainData[ChainIdUtils.Ethereum()].payload = deployPayload(
-            ChainIdUtils.Ethereum()
-        );
+        chainData[ChainIdUtils.Ethereum()].payload = deployPayload(ChainIdUtils.Ethereum());
         govSender = IGovernanceOAppSender(LZ_GOV_SENDER);
 
         // Verify canCallTarget returns true for the spell's target
         // This is checked internally by sendTx before sending the message
         vm.prank(Ethereum.PAUSE_PROXY);
-        govSender.setCanCallTarget(
-            Ethereum.KEEL_PROXY,
-            ENDPOINT_ID_SOLANA,
-            SOLANA_SVM_CONTROLLER_PROGRAM,
-            true
-        );
+        govSender.setCanCallTarget(Ethereum.KEEL_PROXY, ENDPOINT_ID_SOLANA, SOLANA_SVM_CONTROLLER_PROGRAM, true);
 
         vm.prank(Ethereum.PAUSE_PROXY);
-        govSender.setCanCallTarget(
-            Ethereum.KEEL_PROXY,
-            ENDPOINT_ID_SOLANA,
-            SOLANA_BPF_LOADER_V3,
-            true
-        );
+        govSender.setCanCallTarget(Ethereum.KEEL_PROXY, ENDPOINT_ID_SOLANA, SOLANA_BPF_LOADER_V3, true);
 
         // Fund the proxy that will execute the spell with ETH to pay for LayerZero messaging fees
         // The spell executes via delegatecall, so address(this).balance in the spell refers to the proxy's balance
@@ -73,9 +52,6 @@ contract KeelEthereum_20260129Test is KeelTestBase {
         executeAllPayloadsAndBridges();
 
         // If we get here, the spell executed successfully
-        assertTrue(
-            chainData[ChainIdUtils.Ethereum()].spellExecuted,
-            "spell-not-executed"
-        );
+        assertTrue(chainData[ChainIdUtils.Ethereum()].spellExecuted, "spell-not-executed");
     }
 }

@@ -106,9 +106,8 @@ interface IGovernanceOAppSender {
      * @return msgReceipt The receipt containing the message GUID and other details
      * @notice Requires the caller to have permission via canCallTarget mapping
      */
-    function sendTx(
-        TxParams calldata _params,
-        MessagingFee calldata _fee,
-        address _refundAddress
-    ) external payable returns (MessagingReceipt memory msgReceipt);
+    function sendTx(TxParams calldata _params, MessagingFee calldata _fee, address _refundAddress)
+        external
+        payable
+        returns (MessagingReceipt memory msgReceipt);
 }

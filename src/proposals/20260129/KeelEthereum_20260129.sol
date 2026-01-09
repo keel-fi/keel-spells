@@ -1,14 +1,9 @@
 // SPDX-License-Identifier: AGPL-3.0
 pragma solidity 0.8.25;
 
-import {
-    Ethereum,
-    KeelPayloadEthereum
-} from "src/libraries/KeelPayloadEthereum.sol";
+import {Ethereum, KeelPayloadEthereum} from "src/libraries/KeelPayloadEthereum.sol";
 
-import {
-    MainnetController
-} from "lib/keel-alm-controller/src/MainnetController.sol";
+import {MainnetController} from "lib/keel-alm-controller/src/MainnetController.sol";
 
 import {IGovernanceOAppSender, TxParams, MessagingFee, MessagingReceipt} from "src/interfaces/Interfaces.sol";
 
@@ -23,14 +18,14 @@ import {OptionsBuilder} from "@layerzerolabs/oapp-evm/contracts/oapp/libs/Option
  */
 contract KeelEthereum_20260129 is KeelPayloadEthereum {
     using OptionsBuilder for bytes;
-    address internal constant LZ_GOV_SENDER =
-        0x27FC1DD771817b53bE48Dc28789533BEa53C9CCA;
+    address internal constant LZ_GOV_SENDER = 0x27FC1DD771817b53bE48Dc28789533BEa53C9CCA;
 
     uint32 internal constant ENDPOINT_ID_SOLANA = 30168;
 
     // Solana program addresses encoded as bytes32
     // SOLANA_SVM_CONTROLLER_PROGRAM = ALM1JSnEhc5PkNecbSZotgprBuJujL5objTbwGtpTgTd
-    bytes32 internal constant SOLANA_SVM_CONTROLLER_PROGRAM = 0x8aadd66fe8f142fb55a08e900228f5488fcc7d73938bbce28e313e1b87da3624;
+    bytes32 internal constant SOLANA_SVM_CONTROLLER_PROGRAM =
+        0x8aadd66fe8f142fb55a08e900228f5488fcc7d73938bbce28e313e1b87da3624;
 
     function _execute() internal override {
         // [Ethereum] Keel - Add a new relayer to the ALM Controller
@@ -57,12 +52,12 @@ contract KeelEthereum_20260129 is KeelPayloadEthereum {
         // Since this spell runs via delegatecall, address(this).balance is the proxy's balance.
         // The proxy executing this spell must have sufficient ETH to pay the messaging fee.
         require(address(this).balance >= fee.nativeFee, "Insufficient ETH balance for messaging fee");
-        
+
         (bool success, bytes memory returnData) = LZ_GOV_SENDER.call{value: fee.nativeFee}(
             abi.encodeCall(IGovernanceOAppSender.sendTx, (params, fee, LZ_GOV_SENDER))
         );
         require(success, "sendTx failed");
-        
+
         MessagingReceipt memory receipt = abi.decode(returnData, (MessagingReceipt));
     }
 }
