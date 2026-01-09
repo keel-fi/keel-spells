@@ -53,10 +53,16 @@ contract KeelEthereum_20260129 is KeelPayloadEthereum {
         MessagingFee memory fee = govSender.quoteTx(params, false);
 
         // ---------- [Ethereum] Add a new relayer to the ALM Controller ----------
-        MessagingReceipt memory receipt = govSender.sendTx(
-            params,
-            fee,
-            LZ_GOV_SENDER
+        // Note: sendTx is payable and requires ETH to be sent with the call.
+        // Since this spell runs via delegatecall, address(this).balance is the proxy's balance.
+        // The proxy executing this spell must have sufficient ETH to pay the messaging fee.
+        require(address(this).balance >= fee.nativeFee, "Insufficient ETH balance for messaging fee");
+        
+        (bool success, bytes memory returnData) = LZ_GOV_SENDER.call{value: fee.nativeFee}(
+            abi.encodeCall(IGovernanceOAppSender.sendTx, (params, fee, LZ_GOV_SENDER))
         );
+        require(success, "sendTx failed");
+        
+        MessagingReceipt memory receipt = abi.decode(returnData, (MessagingReceipt));
     }
 }
