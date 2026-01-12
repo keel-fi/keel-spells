@@ -3,11 +3,19 @@
   "version": "1.0.0",
   "description": "",
   "private": true,
-  "scripts": {},
+  "scripts": {
+    "extract-payload": "ts-node script/extract-tenderly-payload.ts"
+  },
   "dependencies": {
     "@layerzerolabs/lz-evm-messagelib-v2": "^3.0.75",
     "@layerzerolabs/lz-evm-protocol-v2": "^3.0.75",
     "@layerzerolabs/oapp-evm": "^0.3.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "ethers": "^6.0.0",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.2"
   }
 }
 
