@@ -3,22 +3,11 @@ pragma solidity ^0.8.0;
 
 import {Vm} from "forge-std/Vm.sol";
 import {console} from "forge-std/console.sol";
-import {PacketV1Codec} from "@layerzerolabs/lz-evm-protocol-v2/contracts/messagelib/libs/PacketV1Codec.sol";
-
-/**
- * @dev Helper contract to extract message from encoded packet
- * @notice Needed because PacketV1Codec.message() is internal and requires calldata
- */
-contract PacketMessageHelper {
-    function message(bytes calldata packetBytes) external pure returns (bytes memory) {
-        return PacketV1Codec.message(packetBytes);
-    }
-}
 
 /**
  * @title LayerZeroPayloadCapture
- * @dev Library for capturing LayerZero PacketSent events and extracting message payloads
- * @notice Captures PacketSent events from EndpointV2 and saves message payloads to files
+ * @dev Library for capturing LayerZero PacketSent events and saving encoded payloads
+ * @notice Captures PacketSent events from EndpointV2 and saves full encoded payloads to files
  */
 library LayerZeroPayloadCapture {
     Vm private constant vm = Vm(address(uint160(uint256(keccak256("hevm cheat code")))));
@@ -34,12 +23,12 @@ library LayerZeroPayloadCapture {
     string private constant DEFAULT_OUTPUT_DIR = "reports/payloads";
 
     /**
-     * @dev Captures PacketSent events and extracts message payloads
+     * @dev Captures PacketSent events and saves full encoded payloads
      * @param endpointV2 Address of the LayerZero EndpointV2 contract (defaults to mainnet address)
-     * @param outputDir Directory to save payload files (defaults to test-output/payloads)
+     * @param outputDir Directory to save payload files (defaults to reports/payloads)
      * @param spellId Spell identifier for file naming
      * @return filePaths Array of file paths where payloads were saved
-     * @return payloads Array of extracted message payloads
+     * @return payloads Array of full encoded payloads from PacketSent events
      */
     function capturePayloads(
         address endpointV2,
@@ -79,14 +68,8 @@ library LayerZeroPayloadCapture {
                     // Decode event data: PacketSent(bytes encodedPayload, bytes options, address sendLibrary)
                     (bytes memory encodedPayload,,) = abi.decode(logs[i].data, (bytes, bytes, address));
 
-                    // Extract message from encoded packet using helper contract
-                    // PacketV1Codec.message() is internal and requires calldata, so we use a helper
-                    // Solidity automatically converts bytes memory to bytes calldata for external calls
-                    PacketMessageHelper helper = new PacketMessageHelper();
-                    bytes memory message = helper.message(encodedPayload);
-
-                    // Store payload
-                    payloads[index] = message;
+                    // Store the full encoded payload (includes all LayerZero packet metadata)
+                    payloads[index] = encodedPayload;
 
                     // Generate filename: {spell-id}-{index}.txt
                     string memory filename = string(abi.encodePacked(spellId, "-", vm.toString(index), ".txt"));
@@ -95,7 +78,7 @@ library LayerZeroPayloadCapture {
                     string memory filePath = string(abi.encodePacked(outputDir, "/", filename));
 
                     // Convert payload to hex string (without 0x prefix)
-                    string memory hexPayload = _bytesToHex(message);
+                    string memory hexPayload = _bytesToHex(encodedPayload);
 
                     // Create directory if it doesn't exist (Foundry allows this)
                     // Note: Users may need to run tests with --fs flag for file system access
@@ -109,7 +92,7 @@ library LayerZeroPayloadCapture {
 
                     console.log("Captured payload index:", index - 1);
                     console.log("File path:", filePath);
-                    console.log("Payload size:", message.length);
+                    console.log("Payload size:", encodedPayload.length);
                 }
             }
         }
