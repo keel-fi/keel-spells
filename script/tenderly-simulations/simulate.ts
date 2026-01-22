@@ -148,12 +148,14 @@ function asLower(x: string) {
   // - nonce must be a number (Tenderly type requirement).
   // - balances are uint256 as decimal strings (Tenderly accepts decimals reliably).
   // - Give PAUSE_PROXY + STAR_GUARD enough ETH to cover msg.value + any internal forwarding.
+  const ETH_100 = "100000000000000000000"; // 100 * 1e18, decimal string
+
   const overrides = {
-    [ADDR.KEEL_PROXY]: { balance: "100000000000000000000" }, // 100 ETH
-    [ADDR.PAUSE_PROXY]: { balance: "100000000000000000000" }, // 1 ETH
-    [ADDR.STAR_GUARD]: { balance: "100000000000000000000" }, // 100 ETH
-    [ADDR.DEPLOYER]: { nonce: DEPLOY_NONCE, balance: "100000000000000000000" },
-  };
+    [ADDR.KEEL_PROXY.toLowerCase()]: { balance: ETH_100 },
+    [ADDR.PAUSE_PROXY.toLowerCase()]: { balance: ETH_100 },
+    [ADDR.STAR_GUARD.toLowerCase()]: { balance: ETH_100 },
+    [ADDR.DEPLOYER.toLowerCase()]: { balance: ETH_100, nonce: DEPLOY_NONCE },
+  }
 
   // Single bundle: deploy + perms + plot + exec
   // - Bundle runs sequentially in one simulated state, same as a Foundry test flow.
@@ -176,7 +178,6 @@ function asLower(x: string) {
   });
 
   // If exec failed, print only the frames that carry errors/reverts
-  // (full traces are huge and noisy)
   const execSim: any = sims[4];
   if (!execSim?.status) {
     const trace: any[] = execSim.trace ?? execSim.transaction?.trace ?? [];

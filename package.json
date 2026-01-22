@@ -10,7 +10,8 @@
     "@layerzerolabs/lz-evm-messagelib-v2": "^3.0.75",
     "@layerzerolabs/lz-evm-protocol-v2": "^3.0.75",
     "@layerzerolabs/oapp-evm": "^0.3.2",
-    "@tenderly/sdk": "^0.3.1"
+    "@tenderly/sdk": "^0.3.1",
+    "axios": "^1.13.2"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
