@@ -96,14 +96,18 @@ function extractPacketsFromForgeOutput(input: string): void {
       const encodedPayload = decoded[0] as string;
 
       if (typeof encodedPayload !== "string" || !encodedPayload.startsWith("0x")) {
-        console.warn("Decoded encodedPayload is not a 0x hex string, skipping");
-        continue;
+        throw new Error(
+            "Decoded PacketSent.encodedPayload is not a valid 0x hex string. " +
+            "This indicates an ABI mismatch or corrupted Forge output."
+        );
       }
 
       // Emit JSONL line for piping into your executor
       console.log(JSON.stringify({ i: outIndex++, packet: encodedPayload }));
     } catch (e) {
-      console.warn("Failed to decode PacketSent event:", e);
+      throw new Error(
+      `Failed to decode PacketSent event. This should never happen.\n${e}`
+      );
     }
   }
 
