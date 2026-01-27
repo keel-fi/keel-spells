@@ -28,9 +28,13 @@ contract KeelEthereum_20260212 is KeelPayloadEthereum {
         0x8aadd66fe8f142fb55a08e900228f5488fcc7d73938bbce28e313e1b87da3624;
 
     function _execute() internal override {
-        // [Ethereum] Keel - Add a new relayer to the ALM Controller
+        // [Ethereum] Keel - Add a remove relayer 1 to the ALM Controller
         // Forum: TODO
         _removeRelayer1();
+
+        // [Ethereum] Keel - Add a remove relayer 2 to the ALM Controller
+        // Forum: TODO
+        _removeRelayer2();
     }
 
     function _removeRelayer1() internal {
