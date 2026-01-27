@@ -27,7 +27,7 @@ const validations = [
 /**
  * Runs:
  *
- *   forge test --json -vvvv --match-contract KeelEthereum_20260129Test
+ *   forge test --json -vvvv --match-contract KeelEthereum_20260212Test
  *     | ts-node script/extract-forge-payload.ts
  *
  * and captures stdout.
@@ -41,7 +41,7 @@ const validations = [
 function extractPackets(): string[] {
   // EXACT working shell command — do not change
   const cmd = `
-    forge test --json -vvvv --match-contract KeelEthereum_20260129Test \
+    forge test --json -vvvv --match-contract KeelEthereum_20260212Test \
     | ts-node script/extract-forge-payload.ts
   `;
 
