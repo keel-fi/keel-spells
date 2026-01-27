@@ -194,10 +194,10 @@ abstract contract SpellRunner is Test {
      * @return payloads Array of extracted message payloads
      * @notice Call startCaptureLayerZeroPayloads() before executeAllPayloadsAndBridges() to enable capture
      */
-    function captureLayerZeroPayloads(
-        address endpointV2,
-        string memory outputDir
-    ) internal returns (string[] memory filePaths, bytes[] memory payloads) {
+    function captureLayerZeroPayloads(address endpointV2, string memory outputDir)
+        internal
+        returns (string[] memory filePaths, bytes[] memory payloads)
+    {
         return LayerZeroPayloadCapture.capturePayloads(endpointV2, outputDir, id);
     }
 
