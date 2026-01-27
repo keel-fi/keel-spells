@@ -25,9 +25,10 @@ abstract contract KeelTestBase is CommonTestBase, CommonSpellAssertions, KeelLiq
      * @return payloads Array of extracted message payloads
      * @notice Call startCaptureLayerZeroPayloads() before executeAllPayloadsAndBridges()
      */
-    function captureLayerZeroPayloads(
-        address endpointV2
-    ) internal returns (string[] memory filePaths, bytes[] memory payloads) {
+    function captureLayerZeroPayloads(address endpointV2)
+        internal
+        returns (string[] memory filePaths, bytes[] memory payloads)
+    {
         return captureLayerZeroPayloads(endpointV2, "");
     }
 }

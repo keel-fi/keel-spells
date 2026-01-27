@@ -30,11 +30,10 @@ library LayerZeroPayloadCapture {
      * @return filePaths Array of file paths where payloads were saved
      * @return payloads Array of full encoded payloads from PacketSent events
      */
-    function capturePayloads(
-        address endpointV2,
-        string memory outputDir,
-        string memory spellId
-    ) internal returns (string[] memory filePaths, bytes[] memory payloads) {
+    function capturePayloads(address endpointV2, string memory outputDir, string memory spellId)
+        internal
+        returns (string[] memory filePaths, bytes[] memory payloads)
+    {
         // Use defaults if not provided
         if (endpointV2 == address(0)) {
             endpointV2 = DEFAULT_ENDPOINT_V2;

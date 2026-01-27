@@ -21,13 +21,14 @@ const VALIDATIONS_REPO = "tools/payload-validations";
 
 // Validation scripts (relative to the validations repo root)
 const validations = [
-  "./scripts/controller-manage-permission/validate.ts",
+  ["./scripts/controller-manage-permission/validate.ts", "./scripts/controller-manage-permission/configs/remove-relayer-1.ts"],
+  ["./scripts/controller-manage-permission/validate.ts", "./scripts/controller-manage-permission/configs/remove-relayer-2.ts"],
 ];
 
 /**
  * Runs:
  *
- *   forge test --json -vvvv --match-contract KeelEthereum_20260129Test
+ *   forge test --json -vvvv --match-contract KeelEthereum_20260212Test
  *     | ts-node script/extract-forge-payload.ts
  *
  * and captures stdout.
@@ -41,7 +42,7 @@ const validations = [
 function extractPackets(): string[] {
   // EXACT working shell command — do not change
   const cmd = `
-    forge test --json -vvvv --match-contract KeelEthereum_20260129Test \
+    forge test --json -vvvv --match-contract KeelEthereum_20260212Test \
     | ts-node script/extract-forge-payload.ts
   `;
 
@@ -96,16 +97,17 @@ function main() {
   // Extract packets from Forge run
   const packets = extractPackets();
 
-  // Current policy: validate only the first packet
-  // (can be extended later if multiple packets are expected)
-  const packet = packets[0];
+  if (packets.length !== validations.length) {
+    throw new Error("Number of packets does not match number of validations");
+  }
 
   // Run each validation script exactly the same way
   // as they are currently run inside the validations repo
-  for (const script of validations) {
+  for (let i = 0; i < packets.length; i++) {
+    const [script, config] = validations[i];
     const res = spawnSync(
       "npx",
-      ["ts-node", script, "--packet-bytes", packet],
+      ["ts-node", script, "--config", config, "--packet-bytes", packets[i]],
       {
         stdio: "inherit",          // show validation output
         env: process.env,          // pass env vars through
