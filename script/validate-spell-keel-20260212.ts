@@ -97,6 +97,10 @@ function main() {
   // Extract packets from Forge run
   const packets = extractPackets();
 
+  if (packets.length !== validations.length) {
+    throw new Error("Number of packets does not match number of validations");
+  }
+
   // Run each validation script exactly the same way
   // as they are currently run inside the validations repo
   for (let i = 0; i < packets.length; i++) {
