@@ -4,7 +4,7 @@ This directory contains utility scripts for working with Keel spells, including 
 
 ## Contents
 
-- [`extract-forge-payload.ts`](#extract-forge-payload) - Extract LayerZero packets from Forge test output
+- [`extract-forge-payload.ts`](#the-extract-forge-payload-script) - Extract LayerZero packets from Forge test output
 - [`extract-tenderly-payload.ts`](#extract-tenderly-payload-script) - Extract payloads from Tenderly simulations
 - [`validate-spell-keel-*.ts`](#validation-scripts) - Spell validation orchestrator scripts
 - [`tenderly-simulations/`](./tenderly-simulations/) - Tenderly simulation utilities
