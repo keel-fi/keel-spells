@@ -73,3 +73,7 @@ The project uses Foundry with the following key settings in `foundry.toml`:
 ```
 forge create src/proposals/<DATE>/<SpellContract.sol>:SpellContract --rpc-url <YOUR_RPC_URL> --etherscan-api-key <ETHERSCAN_API_KEY> --private-key <YOUR_PRIVATE_KEY> --broadcast --verify
 ```
+
+## E2E Testing
+
+See [here](./script/README.md)
