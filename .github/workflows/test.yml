@@ -57,3 +57,20 @@ jobs:
         run: |
           forge test -vvv
         id: test
+
+      - name: Install surfpool
+        run: curl -sL https://run.surfpool.run/ | bash
+
+      - name: Show Surfpool version
+        run: ~/.local/bin/surfpool --version
+
+      - name: Install submodule deps
+        run: |
+          cd tools/payload-validations
+          pnpm install
+
+      - name: Run spell e2e tests
+        run: |
+          ~/.local/bin/surfpool start &
+          sleep 5
+          pnpm test:spells

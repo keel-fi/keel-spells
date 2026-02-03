@@ -4,19 +4,23 @@
   "description": "",
   "private": true,
   "scripts": {
-    "extract-payload": "ts-node script/extract-tenderly-payload.ts"
+    "extract-payload": "ts-node script/extract-tenderly-payload.ts",
+    "test:spells": "mocha -r ts-node/register/transpile-only tests/**/*.spec.ts"
   },
   "dependencies": {
     "@layerzerolabs/lz-evm-messagelib-v2": "^3.0.75",
     "@layerzerolabs/lz-evm-protocol-v2": "^3.0.75",
     "@layerzerolabs/oapp-evm": "^0.3.2",
+    "@solana/web3.js": "^1.98.4",
     "@tenderly/sdk": "^0.3.1",
     "axios": "^1.13.2"
   },
   "devDependencies": {
+    "@types/mocha": "^10.0.10",
     "@types/node": "^20.0.0",
     "dotenv": "^17.2.3",
     "ethers": "^6.0.0",
+    "mocha": "^11.7.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.2"
   }
