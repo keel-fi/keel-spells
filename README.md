@@ -77,3 +77,19 @@ forge create src/proposals/<DATE>/<SpellContract.sol>:SpellContract --rpc-url <Y
 ## E2E Testing
 
 See [here](./script/README.md)
+
+## Emergency Spell
+
+### Constants
+
+The `LZ_GOV_SENDER` is the contract we use the send the transaction and payload to LayerZero
+
+```ts
+LZ_GOV_SENDER 0x27FC1DD771817b53bE48Dc28789533BEa53C9CCA
+```
+
+The `SOLANA_SVM_CONTROLLER_PROGRAM` is the solana program address `ALM1JSnEhc5PkNecbSZotgprBuJujL5objTbwGtpTgTd` encoded as bytes32.  It is used as the `dstTarget` for the call to `sendTx`.
+
+```ts
+SOLANA_SVM_CONTROLLER_PROGRAM 0x8aadd66fe8f142fb55a08e900228f5488fcc7d73938bbce28e313e1b87da3624
+```
