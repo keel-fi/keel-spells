@@ -64,6 +64,11 @@ jobs:
       - name: Show Surfpool version
         run: ~/.local/bin/surfpool --version
 
+      - name: Install submodule deps
+        run: |
+          cd tools/payload-validations
+          pnpm install
+
       - name: Run spell e2e tests
         run: |
           ~/.local/bin/surfpool start &
