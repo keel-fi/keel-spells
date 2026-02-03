@@ -42,7 +42,8 @@ function extractPackets(): string[] {
         packets.push(obj.packet);
       }
     } catch {
-      // ignore
+      // Expected: forge / extractor may emit non-JSON lines (logs, warnings).
+        // These are safely ignored.
     }
   }
 
