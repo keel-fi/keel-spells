@@ -8,6 +8,7 @@
     "test:spells": "mocha -r ts-node/register/transpile-only tests/**/*.spec.ts"
   },
   "dependencies": {
+    "@coral-xyz/anchor": "^0.32.1",
     "@layerzerolabs/lz-evm-messagelib-v2": "^3.0.75",
     "@layerzerolabs/lz-evm-protocol-v2": "^3.0.75",
     "@layerzerolabs/oapp-evm": "^0.3.2",
