@@ -1,16 +1,14 @@
 import assert from "assert";
 import { spawnSync } from "node:child_process";
 
-// validator (unchanged)
-import { validateManagePermission } from "../tools/payload-validations/scripts/controller-manage-permission/validate.ts";
+import { validateManageController } from "../tools/payload-validations/scripts/controller-manage-controller/validate.ts";
 
 // canonical configs from the submodule
-import cfg1 from "../tools/payload-validations/scripts/controller-manage-permission/configs/remove-relayer-1.ts";
-import cfg2 from "../tools/payload-validations/scripts/controller-manage-permission/configs/remove-relayer-2.ts";
+import cfg1 from "../tools/payload-validations/scripts/controller-manage-controller/configs/controller-active-mainnet.ts";
 
 function extractPackets(): string[] {
   const cmd = `
-    forge test --json -vvvv --match-contract KeelEthereum_20260212Test \
+    forge test --json -vvvv --match-contract KeelEthereum_unfreezeTest \
     | ts-node script/extract-forge-payload.ts
   `;
 
@@ -54,13 +52,13 @@ function extractPackets(): string[] {
   return packets;
 }
 
-describe("ControllerManagePermission spell", function () {
+describe("unfreeze spell", function () {
   this.timeout(120_000);
 
   it("validates packets using submodule configs", async () => {
     const packets = extractPackets();
 
-    const configs = [cfg1, cfg2];
+    const configs = [cfg1];
 
     assert.equal(
       packets.length,
@@ -69,7 +67,7 @@ describe("ControllerManagePermission spell", function () {
     );
 
     for (let i = 0; i < packets.length; i++) {
-      await validateManagePermission(configs[i], packets[i]);
+      await validateManageController(configs[i], packets[i]);
     }
   });
 });
