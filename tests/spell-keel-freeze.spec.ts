@@ -4,11 +4,11 @@ import { spawnSync } from "node:child_process";
 import { validateManageController } from "../tools/payload-validations/scripts/controller-manage-controller/validate.ts";
 
 // canonical configs from the submodule
-import cfg1 from "../tools/payload-validations/scripts/controller-manage-controller/configs/controller-active-mainnet.ts";
+import cfg1 from "../tools/payload-validations/scripts/controller-manage-controller/configs/controller-frozen-mainnet.ts";
 
 function extractPackets(): string[] {
   const cmd = `
-    forge test --json -vvvv --match-contract KeelEthereum_unfreezeTest \
+    forge test --json -vvvv --match-contract KeelEthereum_freezeTest \
     | ts-node script/extract-forge-payload.ts
   `;
 
@@ -52,7 +52,7 @@ function extractPackets(): string[] {
   return packets;
 }
 
-describe("unfreeze spell", function () {
+describe("freeze spell", function () {
   this.timeout(120_000);
 
   it("validates packets using submodule configs", async () => {
