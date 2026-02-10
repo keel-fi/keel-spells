@@ -76,7 +76,7 @@ forge create src/proposals/<DATE>/<SpellContract.sol>:SpellContract --rpc-url <Y
 
 ## E2E Testing
 
-See [here](./script/README.md)
+See [here](./tests/README.md)
 
 ## Emergency Spell
 
