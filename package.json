@@ -4,9 +4,7 @@
   "description": "",
   "private": true,
   "type": "module",
-  "scripts": {
-    "extract-payload": "ts-node script/extract-tenderly-payload.ts"
-  },
+  "scripts": {},
   "dependencies": {
     "@layerzerolabs/lz-evm-messagelib-v2": "^3.0.75",
     "@layerzerolabs/lz-evm-protocol-v2": "^3.0.75",
