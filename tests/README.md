@@ -17,21 +17,7 @@ This Mocha test validates the **ControllerManagePermission** cross-chain spell e
 ## How to run
 
 ```bash
-pnpm mocha -r ts-node/register/transpile-only tests/spell-keel-20260212.spec.ts
-```
-
-Or via `package.json`:
-
-```json
-{
-  "scripts": {
-    "test:spell": "mocha -r ts-node/register/transpile-only tests/spell-keel-20260212.spec.ts"
-  }
-}
-```
-
-```bash
-pnpm run test:spell
+pnpm hardhat test tests/spell-keel-freeze.spec.ts --network mainnetFork
 ```
 
 ---
