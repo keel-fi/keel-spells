@@ -73,4 +73,4 @@ jobs:
         run: |
           ~/.local/bin/surfpool start &
           sleep 5
-          pnpm hardhat test tests/spell-keel-freeze.spec.ts --network mainnetFork
+          pnpm hardhat test tests/*.ts --network mainnetFork
