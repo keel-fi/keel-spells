@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "private": true,
+  "type": "module",
   "scripts": {
-    "extract-payload": "ts-node script/extract-tenderly-payload.ts",
-    "test:spells": "mocha -r ts-node/register/transpile-only tests/**/*.spec.ts"
+    "extract-payload": "ts-node script/extract-tenderly-payload.ts"
   },
   "dependencies": {
     "@layerzerolabs/lz-evm-messagelib-v2": "^3.0.75",
@@ -28,6 +28,5 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3",
     "viem": "^2.45.2"
-  },
-  "type": "module"
+  }
 }

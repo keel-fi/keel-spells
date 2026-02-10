@@ -51,7 +51,7 @@ contract KeelEthereum_freeze is KeelPayloadEthereum {
         require(address(this).balance >= fee.nativeFee, "Insufficient ETH balance for messaging fee");
 
         (bool success, bytes memory returnData) = LZ_GOV_SENDER.call{value: fee.nativeFee}(
-            abi.encodeCall(IGovernanceOAppSender.sendTx, (params, fee, LZ_GOV_SENDER))
+            abi.encodeCall(IGovernanceOAppSender.sendTx, (params, fee, address(this)))
         );
         require(success, "sendTx failed");
 

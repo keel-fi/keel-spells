@@ -82,6 +82,9 @@ function runValidateManageController(
         stdio: ["ignore", "pipe", "pipe"],
       }
     );
+    child.on("error", (error) => {
+      reject(new Error(`Validation failed: ${error.message}`));
+    });
     let stderr = "";
     child.stderr?.on("data", (chunk) => {
       stderr += chunk.toString();
