@@ -1,0 +1,15 @@
+lib/=lib/
+src/=src/
+forge-std/=node_modules/forge-std/src/
+keel-alm-controller/src/=lib/keel-alm-controller/src/
+keel-address-registry/=lib/keel-address-registry/src/
+xchain-helpers/=lib/xchain-helpers/src/
+aave-v3-origin/=lib/keel-alm-controller/lib/aave-v3-origin/
+openzeppelin-contracts/contracts/=node_modules/@openzeppelin/contracts/
+spark-address-registry/=lib/keel-alm-controller/lib/spark-address-registry/src/
+spark-psm/=lib/keel-alm-controller/lib/spark-psm/
+erc20-helpers/=lib/keel-alm-controller/lib/erc20-helpers/src/
+metamorpho/=lib/keel-alm-controller/lib/metamorpho/src/
+layerzerolabs/oapp-evm/=lib/keel-alm-controller/lib/devtools/packages/oapp-evm/
+@layerzerolabs/oapp-evm/=lib/keel-alm-controller/lib/devtools/packages/oapp-evm/
+@layerzerolabs/=node_modules/@layerzerolabs/

@@ -12,7 +12,6 @@ import {Domain, DomainHelpers} from "xchain-helpers/testing/Domain.sol";
 import {ChainIdUtils, ChainId} from "../libraries/ChainId.sol";
 
 import {IStarGuardLike} from "../interfaces/Interfaces.sol";
-import {LayerZeroPayloadCapture} from "./LayerZeroPayloadCapture.sol";
 
 abstract contract SpellRunner is Test {
     using DomainHelpers for Domain;
@@ -184,37 +183,6 @@ abstract contract SpellRunner is Test {
         require(payload == payloadAddress, "FAILED TO EXECUTE PAYLOAD");
 
         chainData[ChainIdUtils.Ethereum()].spellExecuted = true;
-    }
-
-    /**
-     * @dev Captures LayerZero payloads from PacketSent events and saves them to files
-     * @param endpointV2 Address of LayerZero EndpointV2 contract (defaults to mainnet address if address(0))
-     * @param outputDir Directory to save payload files (defaults to "test-output/payloads" if empty)
-     * @return filePaths Array of file paths where payloads were saved
-     * @return payloads Array of extracted message payloads
-     * @notice Call startCaptureLayerZeroPayloads() before executeAllPayloadsAndBridges() to enable capture
-     */
-    function captureLayerZeroPayloads(address endpointV2, string memory outputDir)
-        internal
-        returns (string[] memory filePaths, bytes[] memory payloads)
-    {
-        return LayerZeroPayloadCapture.capturePayloads(endpointV2, outputDir, id);
-    }
-
-    /**
-     * @dev Starts recording logs for LayerZero payload capture
-     * @notice Call this before executeAllPayloadsAndBridges() to enable payload capture
-     */
-    function startCaptureLayerZeroPayloads() internal {
-        LayerZeroPayloadCapture.startCapture();
-    }
-
-    /**
-     * @dev Gets the default LayerZero EndpointV2 address
-     * @return Default EndpointV2 address
-     */
-    function getDefaultEndpointV2() internal pure returns (address) {
-        return LayerZeroPayloadCapture.getDefaultEndpointV2();
     }
 
     function _isContract(address account) internal view returns (bool) {

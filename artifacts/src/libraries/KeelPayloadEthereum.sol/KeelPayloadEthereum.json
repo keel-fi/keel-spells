@@ -1,0 +1,34 @@
+{
+  "_format": "hh3-artifact-1",
+  "contractName": "KeelPayloadEthereum",
+  "sourceName": "src/libraries/KeelPayloadEthereum.sol",
+  "abi": [
+    {
+      "inputs": [],
+      "name": "execute",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "isExecutable",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "result",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {},
+  "immutableReferences": {},
+  "inputSourceName": "project/src/libraries/KeelPayloadEthereum.sol",
+  "buildInfoId": "solc-0_8_25-3a668e37e0001809778ce89d297f6f54dbb0a132"
+}

@@ -25,7 +25,7 @@ src/
 
 lib/                    # External dependencies
 ├── dss-allocator/      # DSS Allocator contracts
-├── forge-std/          # Foundry standard library
+├── forge-std/          # Foundry standard library (for Solidity tests)
 ├── keel-address-registry/  # Address registry
 ├── keel-alm-controller/    # ALM Controller contracts
 └── xchain-helpers/     # Cross-chain utilities
@@ -35,44 +35,63 @@ lib/                    # External dependencies
 
 ### Running Tests
 
-Run all tests:
+Run all tests (Solidity + TypeScript):
 ```bash
-forge test
+pnpm test
+# or
+hardhat test
+```
+
+Run only Solidity tests:
+```bash
+pnpm test:solidity
+# or
+hardhat test solidity
+```
+
+Run only TypeScript tests:
+```bash
+pnpm test:ts
+# or
+hardhat test tests/*.ts --network mainnetFork
+```
+
+Run specific Solidity test file:
+```bash
+hardhat test src/proposals/emergency/KeelEthereum_freeze.t.sol
 ```
 
 Run tests with verbose output:
 ```bash
-forge test -vvv
-```
-
-Run specific test file:
-```bash
-forge test --match-path "src/proposals/20251002/KeelEthereum_20251002.t.sol"
-```
-
-Run tests matching a pattern:
-```bash
-forge test --match-test "testSpellExecution"
+hardhat test --verbose
 ```
 
 ### Prerequisites
 
-- [Foundry](https://book.getfoundry.sh/getting-started/installation) installed
-- Solidity compiler version 0.8.25 (configured in `foundry.toml`)
+- [Node.js](https://nodejs.org/) (v20 or later)
+- [pnpm](https://pnpm.io/) package manager
+- Solidity compiler version 0.8.25 (configured in `hardhat.config.ts`)
 
 ### Configuration
 
-The project uses Foundry with the following key settings in `foundry.toml`:
+The project uses Hardhat with the following key settings in `hardhat.config.ts`:
 - Solidity version: 0.8.25
 - EVM version: Cancun
 - Optimizer: Disabled
-- FFI: Enabled (for external calls)
+- FFI: Enabled (for external calls in Solidity tests)
+- Test paths: Solidity tests in `src/` directory (`.t.sol` files)
+
+Hardhat 3 supports Solidity tests with `forge-std` and all Foundry cheatcodes (`vm.*` functions), so existing Solidity test files work without modification.
 
 ## Deploy Spell
 
+Deploy using Hardhat scripts or Hardhat Ignition. Example:
+
+```bash
+hardhat run scripts/deploy-spell.ts --network mainnet
 ```
-forge create src/proposals/<DATE>/<SpellContract.sol>:SpellContract --rpc-url <YOUR_RPC_URL> --etherscan-api-key <ETHERSCAN_API_KEY> --private-key <YOUR_PRIVATE_KEY> --broadcast --verify
-```
+
+Or use Hardhat Ignition for more complex deployments.
 
 ## E2E Testing
 

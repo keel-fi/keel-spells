@@ -6,7 +6,24 @@ export default defineConfig({
   plugins: [hardhatToolboxViemPlugin, hardhatNetworkHelpers],
   solidity: {
     version: "0.8.25",
+    settings: {
+      optimizer: {
+        enabled: false,
+      },
+      evmVersion: "cancun",
+    },
   },
+  paths: {
+    sources: "./src",
+    tests: {
+      solidity: "./src", // Look for .t.sol files in src/ directory
+    },
+    cache: "./cache",
+    artifacts: "./artifacts",
+  },
+  // Remappings for Solidity imports (similar to Foundry)
+  // Hardhat automatically resolves node_modules, but we can configure additional paths
+  // The @layerzerolabs/ remapping is handled automatically via node_modules
   networks: {
     mainnetFork: {
       type: "edr-simulated",
@@ -17,5 +34,9 @@ export default defineConfig({
       },
     },
   },
-  // Use default paths; we deploy from Foundry artifacts in the test
+  test: {
+    solidity: {
+      ffi: true, // Enable FFI for vm.ffi() calls in SpellRunner.sol
+    },
+  },
 });

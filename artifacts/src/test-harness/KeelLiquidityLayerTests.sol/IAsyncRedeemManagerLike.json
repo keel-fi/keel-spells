@@ -1,0 +1,211 @@
+{
+  "_format": "hh3-artifact-1",
+  "contractName": "IAsyncRedeemManagerLike",
+  "sourceName": "src/test-harness/KeelLiquidityLayerTests.sol",
+  "abi": [
+    {
+      "inputs": [],
+      "name": "balanceSheet",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint64",
+          "name": "poolId",
+          "type": "uint64"
+        },
+        {
+          "internalType": "bytes16",
+          "name": "scId",
+          "type": "bytes16"
+        },
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "internalType": "uint128",
+          "name": "assetId",
+          "type": "uint128"
+        },
+        {
+          "internalType": "uint128",
+          "name": "fulfilledAssets",
+          "type": "uint128"
+        },
+        {
+          "internalType": "uint128",
+          "name": "fulfilledShares",
+          "type": "uint128"
+        },
+        {
+          "internalType": "uint128",
+          "name": "cancelledAssets",
+          "type": "uint128"
+        }
+      ],
+      "name": "fulfillDepositRequest",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint64",
+          "name": "poolId",
+          "type": "uint64"
+        },
+        {
+          "internalType": "bytes16",
+          "name": "scId",
+          "type": "bytes16"
+        },
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "internalType": "uint128",
+          "name": "assetId",
+          "type": "uint128"
+        },
+        {
+          "internalType": "uint128",
+          "name": "fulfilledAssets",
+          "type": "uint128"
+        },
+        {
+          "internalType": "uint128",
+          "name": "fulfilledShares",
+          "type": "uint128"
+        },
+        {
+          "internalType": "uint128",
+          "name": "cancelledShares",
+          "type": "uint128"
+        }
+      ],
+      "name": "fulfillRedeemRequest",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint64",
+          "name": "poolId",
+          "type": "uint64"
+        },
+        {
+          "internalType": "bytes16",
+          "name": "scId",
+          "type": "bytes16"
+        },
+        {
+          "internalType": "uint128",
+          "name": "shareAmount",
+          "type": "uint128"
+        },
+        {
+          "internalType": "uint128",
+          "name": "pricePoolPerShare",
+          "type": "uint128"
+        }
+      ],
+      "name": "issuedShares",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint64",
+          "name": "poolId",
+          "type": "uint64"
+        }
+      ],
+      "name": "poolEscrow",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint64",
+          "name": "poolId",
+          "type": "uint64"
+        },
+        {
+          "internalType": "bytes16",
+          "name": "scId",
+          "type": "bytes16"
+        },
+        {
+          "internalType": "uint128",
+          "name": "assetId",
+          "type": "uint128"
+        },
+        {
+          "internalType": "uint128",
+          "name": "assetAmount",
+          "type": "uint128"
+        },
+        {
+          "internalType": "uint128",
+          "name": "shareAmount",
+          "type": "uint128"
+        },
+        {
+          "internalType": "uint128",
+          "name": "pricePoolPerShare",
+          "type": "uint128"
+        }
+      ],
+      "name": "revokedShares",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "spoke",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {},
+  "immutableReferences": {},
+  "inputSourceName": "project/src/test-harness/KeelLiquidityLayerTests.sol",
+  "buildInfoId": "solc-0_8_25-3a668e37e0001809778ce89d297f6f54dbb0a132"
+}

@@ -1,0 +1,37 @@
+{
+  "_format": "hh3-artifact-1",
+  "contractName": "IFreelyTransferableHookLike",
+  "sourceName": "src/test-harness/KeelLiquidityLayerTests.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "internalType": "uint64",
+          "name": "validUntil",
+          "type": "uint64"
+        }
+      ],
+      "name": "updateMember",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {},
+  "immutableReferences": {},
+  "inputSourceName": "project/src/test-harness/KeelLiquidityLayerTests.sol",
+  "buildInfoId": "solc-0_8_25-3a668e37e0001809778ce89d297f6f54dbb0a132"
+}

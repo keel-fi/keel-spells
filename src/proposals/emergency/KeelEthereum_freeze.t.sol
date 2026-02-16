@@ -55,33 +55,4 @@ contract KeelEthereum_freezeTest is KeelTestBase {
         // If we get here, the spell executed successfully
         assertTrue(chainData[ChainIdUtils.Ethereum()].spellExecuted, "spell-not-executed");
     }
-
-    function test_spellExecutesAndCapturesPayloads() public {
-        address payload = chainData[ChainIdUtils.Ethereum()].payload;
-        require(payload != address(0), "payload-not-deployed");
-
-        // Start capturing LayerZero payloads before execution
-        startCaptureLayerZeroPayloads();
-
-        // Execute the payload - this should not revert
-        executeAllPayloadsAndBridges();
-
-        // Capture and save payloads to files
-        (string[] memory filePaths, bytes[] memory payloads) = captureLayerZeroPayloads();
-
-        // Verify payloads were captured
-        assertTrue(payloads.length > 0, "no-payloads-captured");
-        assertTrue(bytes(filePaths[0]).length > 0, "no-file-paths-returned");
-
-        // Verify spell executed successfully
-        assertTrue(chainData[ChainIdUtils.Ethereum()].spellExecuted, "spell-not-executed");
-
-        // Log captured payload information
-        console.log("Captured payloads:", payloads.length);
-        for (uint256 i = 0; i < payloads.length; i++) {
-            console.log("Payload index:", i);
-            console.log("Payload size:", payloads[i].length);
-            console.log("Saved to:", filePaths[i]);
-        }
-    }
 }

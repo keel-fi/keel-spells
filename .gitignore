@@ -15,5 +15,6 @@ docs/
 
 .vscode/
 node_modules/
+.pnpm-store/
 
 .surfpool/

@@ -1,23 +1,35 @@
-# ControllerManagePermission Spell – Mocha Test
-
-This Mocha test validates the **ControllerManagePermission** cross-chain spell end-to-end.
+# Spell Testing
 
 ## Prerequisites
 
-- Forge installed and available in `$PATH`
-- `surfpool` running
-- Node.js + pnpm
+- [Node.js](https://nodejs.org/) (v20 or later)
+- [pnpm](https://pnpm.io/) package manager
+- `surfpool` installed and running:
+ ```bash
+ surfpool start
+ ```
 - Submodules initialized:
-  ```bash
-  git submodule update --init --recursive
-  ```
+ ```bash
+ git submodule update --init --recursive
+ ```
 
 ---
 
 ## How to run
 
+Run all tests (Solidity + TypeScript):
 ```bash
-pnpm hardhat test tests/spell-keel-freeze.spec.ts --network mainnetFork
+pnpm test
+```
+
+Run only TypeScript e2e tests:
+```bash
+pnpm test:ts
+```
+
+Run only Solidity tests:
+```bash
+pnpm test:solidity
 ```
 
 ---
