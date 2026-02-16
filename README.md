@@ -38,22 +38,16 @@ lib/                    # External dependencies
 Run all tests (Solidity + TypeScript):
 ```bash
 pnpm test
-# or
-hardhat test
 ```
 
 Run only Solidity tests:
 ```bash
 pnpm test:solidity
-# or
-hardhat test solidity
 ```
 
 Run only TypeScript tests:
 ```bash
 pnpm test:ts
-# or
-hardhat test tests/*.ts --network mainnetFork
 ```
 
 Run specific Solidity test file:
@@ -74,6 +68,8 @@ hardhat test --verbose
 
 ### Configuration
 
+**Mainnet fork (required for some tests):** Tests that fork Ethereum mainnet (e.g. `KeelEthereum_freeze.t.sol`) need an RPC URL. Set `MAINNET_RPC_URL` in your environment or in a `.env` file (e.g. from [Alchemy](https://www.alchemy.com/) or [Infura](https://www.infura.io/) free tier). If unset, the default public RPC may rate-limit (HTTP 429) and fork creation will fail.
+
 The project uses Hardhat with the following key settings in `hardhat.config.ts`:
 - Solidity version: 0.8.25
 - EVM version: Cancun
@@ -90,8 +86,6 @@ Deploy using Hardhat scripts or Hardhat Ignition. Example:
 ```bash
 hardhat run scripts/deploy-spell.ts --network mainnet
 ```
-
-Or use Hardhat Ignition for more complex deployments.
 
 ## E2E Testing
 

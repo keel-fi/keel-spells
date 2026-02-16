@@ -55,6 +55,8 @@ jobs:
           pnpm install
 
       - name: Run spell e2e tests
+        env:
+          MAINNET_RPC_URL: ${{secrets.MAINNET_RPC_URL}}
         run: |
           ~/.local/bin/surfpool start &
           sleep 5

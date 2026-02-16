@@ -5,7 +5,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "hardhat test",
+    "test": "hardhat test --network mainnetFork",
     "test:solidity": "hardhat test solidity",
     "test:ts": "hardhat test tests/*.ts --network mainnetFork",
     "compile": "hardhat compile",
