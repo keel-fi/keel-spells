@@ -1,6 +1,5 @@
 import assert from "node:assert";
 import { describe, it } from "node:test";
-import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { spawn } from "node:child_process";
 import { network } from "hardhat";
@@ -8,9 +7,7 @@ import {
   keccak256,
   parseEther,
   getContract,
-  getContractAddress,
 } from "viem";
-import { deployContract } from "viem/actions";
 import {
   ADDRESSES,
   ENDPOINT_ID_SOLANA,
@@ -29,33 +26,6 @@ const LZ_PACKET_SENT_ABI = [
     ],
   },
 ] as const;
-
-function loadFoundryArtifact(contractName: string) {
-  const artifactPath = join(
-    process.cwd(),
-    "out",
-    `${contractName}.sol`,
-    `${contractName}.json`
-  );
-  const raw = readFileSync(artifactPath, "utf-8");
-  const artifact = JSON.parse(raw);
-  return {
-    abi: artifact.abi,
-    bytecode: artifact.bytecode.object as `0x${string}`,
-  };
-}
-
-function loadFoundryAbi(contractName: string) {
-  const artifactPath = join(
-    process.cwd(),
-    "out",
-    "Interfaces.sol",
-    `${contractName}.json`
-  );
-  const raw = readFileSync(artifactPath, "utf-8");
-  const artifact = JSON.parse(raw);
-  return artifact.abi;
-}
 
 function runValidateManageController(
   configPath: string,
@@ -109,20 +79,9 @@ describe("freeze spell", async function () {
   }
 
   it("validates packets using submodule configs", async () => {
-    const artifact = loadFoundryArtifact("KeelEthereum_freeze");
-    const deployerNonce = await publicClient.getTransactionCount({
-      address: payerWallet.account.address,
-    });
-    await deployContract(payerWallet, {
-      abi: artifact.abi,
-      bytecode: artifact.bytecode,
-      args: [],
-    });
+    const deployedContract = await viem.deployContract("KeelEthereum_freeze", []);
     const deploymentBlockNumber = await publicClient.getBlockNumber();
-    const spellAddress = getContractAddress({
-      from: payerWallet.account.address,
-      nonce: BigInt(deployerNonce),
-    });
+    const spellAddress = deployedContract.address;
 
     const deployedBytecode = await publicClient.getBytecode({ address: spellAddress });
     if (!deployedBytecode) throw new Error("No bytecode at spell address");
@@ -137,7 +96,10 @@ describe("freeze spell", async function () {
 
     const govSender = getContract({
       address: ADDRESSES.LZ_GOV_SENDER as `0x${string}`,
-      abi: loadFoundryAbi("IGovernanceOAppSender"),
+      abi: [
+        'function plot(address addr_, bytes32 tag_) external',
+        'function exec() external returns (address addr)',
+      ],
       client: { wallet: pauseProxyWallet, public: publicClient },
     });
     await govSender.write.setCanCallTarget([
@@ -155,7 +117,10 @@ describe("freeze spell", async function () {
 
     const starGuard = getContract({
       address: ADDRESSES.KEEL_STAR_GUARD as `0x${string}`,
-      abi: loadFoundryAbi("IStarGuardLike"),
+      abi: [
+        'function plot(address addr_, bytes32 tag_) external',
+        'function exec() external returns (address addr)',
+      ],
       client: { wallet: pauseProxyWallet, public: publicClient },
     });
     await starGuard.write.plot([spellAddress, bytecodeHash as `0x${string}`]);
