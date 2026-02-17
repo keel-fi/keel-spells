@@ -7,6 +7,7 @@ import {
   keccak256,
   parseEther,
   getContract,
+  parseAbi,
 } from "viem";
 import {
   ADDRESSES,
@@ -96,10 +97,9 @@ describe("freeze spell", async function () {
 
     const govSender = getContract({
       address: ADDRESSES.LZ_GOV_SENDER as `0x${string}`,
-      abi: [
-        'function plot(address addr_, bytes32 tag_) external',
-        'function exec() external returns (address addr)',
-      ],
+      abi: parseAbi([
+        'function setCanCallTarget(address _srcSender, uint32 _dstEid, bytes32 _dstTarget, bool _canCall) external',
+      ]),
       client: { wallet: pauseProxyWallet, public: publicClient },
     });
     await govSender.write.setCanCallTarget([
@@ -117,10 +117,10 @@ describe("freeze spell", async function () {
 
     const starGuard = getContract({
       address: ADDRESSES.KEEL_STAR_GUARD as `0x${string}`,
-      abi: [
+      abi: parseAbi([
         'function plot(address addr_, bytes32 tag_) external',
         'function exec() external returns (address addr)',
-      ],
+      ]),
       client: { wallet: pauseProxyWallet, public: publicClient },
     });
     await starGuard.write.plot([spellAddress, bytecodeHash as `0x${string}`]);
