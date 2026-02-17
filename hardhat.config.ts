@@ -3,6 +3,8 @@ import { defineConfig, configVariable } from "hardhat/config";
 import hardhatToolboxViemPlugin from "@nomicfoundation/hardhat-toolbox-viem";
 import hardhatNetworkHelpers from "@nomicfoundation/hardhat-network-helpers";
 
+process.env.MAINNET_RPC_URL ??= "https://eth.llamarpc.com";
+
 export default defineConfig({
   plugins: [hardhatToolboxViemPlugin, hardhatNetworkHelpers],
   solidity: {
@@ -30,7 +32,7 @@ export default defineConfig({
       type: "edr-simulated",
       forking: {
         // MAINNET_RPC_URL required for forking (archive node recommended; public RPCs may rate-limit)
-        url: configVariable("MAINNET_RPC_URL") ?? "https://eth.llamarpc.com",
+        url: configVariable("MAINNET_RPC_URL"),
         blockNumber: 24192205,
       },
     },
