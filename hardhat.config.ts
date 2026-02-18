@@ -20,6 +20,7 @@ export default defineConfig({
     sources: "./src",
     tests: {
       solidity: "./src", // Look for .t.sol files in src/ directory
+      nodejs: "./src/proposals", // Look for TypeScript test files in src/proposals/ directory
     },
     cache: "./cache",
     artifacts: "./artifacts",
@@ -33,7 +34,6 @@ export default defineConfig({
       forking: {
         // MAINNET_RPC_URL required for forking (archive node recommended; public RPCs may rate-limit)
         url: configVariable("MAINNET_RPC_URL"),
-        blockNumber: 24192205,
       },
     },
   },
