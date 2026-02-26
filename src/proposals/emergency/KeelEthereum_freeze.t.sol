@@ -28,17 +28,8 @@ contract KeelEthereum_freezeTest is KeelTestBase {
     }
 
     function setUp() public {
-        setupDomain({mainnetForkBlock: 24192205});
+        setupDomain({mainnetForkBlock: 24542100});
         chainData[ChainIdUtils.Ethereum()].payload = deployPayload(ChainIdUtils.Ethereum());
-        govSender = IGovernanceOAppSender(LZ_GOV_SENDER);
-
-        // Verify canCallTarget returns true for the spell's target
-        // This is checked internally by sendTx before sending the message
-        vm.prank(Ethereum.PAUSE_PROXY);
-        govSender.setCanCallTarget(Ethereum.KEEL_PROXY, ENDPOINT_ID_SOLANA, SOLANA_SVM_CONTROLLER_PROGRAM, true);
-
-        vm.prank(Ethereum.PAUSE_PROXY);
-        govSender.setCanCallTarget(Ethereum.KEEL_PROXY, ENDPOINT_ID_SOLANA, SOLANA_BPF_LOADER_V3, true);
 
         // Fund the proxy that will execute the spell with ETH to pay for LayerZero messaging fees
         // The spell executes via delegatecall, so address(this).balance in the spell refers to the proxy's balance

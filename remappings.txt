@@ -1,6 +1,6 @@
 lib/=lib/
 src/=src/
-forge-std/=node_modules/forge-std/src/
+forge-std/=lib/forge-std/src/
 keel-alm-controller/src/=lib/keel-alm-controller/src/
 keel-address-registry/=lib/keel-address-registry/src/
 xchain-helpers/=lib/xchain-helpers/src/

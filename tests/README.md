@@ -11,6 +11,7 @@
 - Submodules initialized:
  ```bash
  git submodule update --init --recursive
+ cd tools/payload-validations && pnpm i
  ```
 
 ---
