@@ -12,3 +12,11 @@ docs/
 
 # Dotenv file
 .env
+
+.vscode/
+node_modules/
+.pnpm-store/
+
+.surfpool/
+
+artifacts/

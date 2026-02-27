@@ -4,8 +4,6 @@ pragma solidity ^0.8.0;
 import {IERC20} from "forge-std/interfaces/IERC20.sol";
 import {IERC4626} from "forge-std/interfaces/IERC4626.sol";
 
-import {CCTPForwarder} from "lib/xchain-helpers/src/forwarders/CCTPForwarder.sol";
-
 import {Ethereum} from "keel-address-registry/Ethereum.sol";
 
 import {IALMProxy} from "keel-alm-controller/src/interfaces/IALMProxy.sol";
@@ -18,8 +16,6 @@ import {KeelLiquidityLayerHelpers} from "src/libraries/KeelLiquidityLayerHelpers
 import {ChainId, ChainIdUtils} from "../libraries/ChainId.sol";
 
 import {SpellRunner} from "./SpellRunner.sol";
-
-import {console} from "forge-std/console.sol";
 
 struct KeelLiquidityLayerContext {
     address controller;

@@ -13,3 +13,6 @@
 [submodule "lib/keel-alm-controller"]
 	path = lib/keel-alm-controller
 	url = https://github.com/keel-fi/keel-alm-controller
+[submodule "tools/payload-validations"]
+	path = tools/payload-validations
+	url = https://github.com/keel-fi/crosschain-gov-solana-spell-payloads
